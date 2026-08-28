@@ -163,6 +163,17 @@ describe('API behavior against the OpenAPI contract', () => {
       createdAt: expect.any(String),
     });
 
+    const updatedPlot = await request<typeof plot.body>(baseUrl, `/api/plots/${plot.body.id}`, {
+      method: 'PATCH',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name: 'Updated Contract Plot' }),
+    });
+    expect(updatedPlot.status).toBe(200);
+    expect(updatedPlot.body).toEqual({
+      ...plot.body,
+      name: 'Updated Contract Plot',
+    });
+
     const forecast = await request<Array<{ plotId: string; source: string }>>(
       baseUrl,
       `/api/plots/${plot.body.id}/weather/hourly`,

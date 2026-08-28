@@ -65,7 +65,10 @@ export class PlotsService {
 
   async update(id: string, dto: UpdatePlotDto, ownerId: string): Promise<Plot> {
     const current = await this.findOne(id, ownerId);
-    const updated = { ...current, ...dto };
+    const changes = Object.fromEntries(
+      Object.entries(dto).filter(([, value]) => value !== undefined),
+    ) as UpdatePlotDto;
+    const updated: Plot = { ...current, ...changes };
     if (this.database.enabled) {
       await this.database.query(
         `UPDATE plots SET name=$1, latitude=$2, longitude=$3, province=$4, crop_type=$5,
