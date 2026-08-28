@@ -17,4 +17,9 @@ describe('DatabaseService production configuration', () => {
   it('allows in-memory storage in development', () => {
     expect(new DatabaseService(config({ NODE_ENV: 'development' }) as never).enabled).toBe(false);
   });
+
+  it('temporarily allows in-memory storage on Vercel', () => {
+    expect(new DatabaseService(config({ NODE_ENV: 'production', VERCEL: '1' }) as never).enabled)
+      .toBe(false);
+  });
 });

@@ -10,7 +10,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   constructor(config: ConfigService) {
     const connectionString = config.get<string>('DATABASE_URL');
     const production = config.get<string>('NODE_ENV') === 'production';
-    const allowInMemory = config.get<string>('ALLOW_IN_MEMORY_STORAGE', 'false').toLowerCase() === 'true';
+    // Temporary Vercel fallback until the deployment has a persistent PostgreSQL database.
+    const runningOnVercel = config.get<string>('VERCEL') === '1';
+    const allowInMemory = runningOnVercel
+      || config.get<string>('ALLOW_IN_MEMORY_STORAGE', 'false').toLowerCase() === 'true';
     if (!connectionString && production && !allowInMemory) {
       throw new Error(
         'DATABASE_URL is required in production. Set ALLOW_IN_MEMORY_STORAGE=true only for disposable previews.',
