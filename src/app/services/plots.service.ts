@@ -6,7 +6,7 @@ import { UpdatePlotDto } from '../dtos/update-plot.dto';
 import { Plot } from '../models/domain';
 
 type PlotRow = {
-  id: string; name: string; latitude: number; longitude: number; province?: string;
+  id: string; name: string; latitude: number; longitude: number; province?: string | null;
   crop_type: Plot['cropType']; planted_at: string | Date; active: boolean; created_at: string | Date;
 };
 
@@ -89,7 +89,7 @@ export class PlotsService {
   private toPlot(row: PlotRow): Plot {
     return {
       id: row.id, name: row.name, latitude: row.latitude, longitude: row.longitude,
-      province: row.province, cropType: row.crop_type,
+      province: row.province ?? undefined, cropType: row.crop_type,
       plantedAt: new Date(row.planted_at).toISOString().slice(0, 10), active: row.active,
       createdAt: new Date(row.created_at).toISOString(),
     };

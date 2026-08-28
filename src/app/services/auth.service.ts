@@ -133,7 +133,17 @@ export class AuthService {
   private async allUsers(): Promise<UserRow[]> { return this.database.enabled ? this.database.query<UserRow>('SELECT * FROM users ORDER BY created_at') : [...this.users.values()]; }
   private async findByUsername(username: string): Promise<UserRow | undefined> { return this.database.enabled ? (await this.database.query<UserRow>('SELECT * FROM users WHERE username=$1', [username]))[0] : this.users.get(username); }
   private async findById(id: string): Promise<UserRow | undefined> { return this.database.enabled ? (await this.database.query<UserRow>('SELECT * FROM users WHERE id=$1', [id]))[0] : [...this.users.values()].find((u) => u.id === id); }
-  private publicUser(user: UserRow) { return { id: user.id, username: user.username, role: user.role, displayName: user.display_name, phone: user.phone, province: user.province, createdAt: user.created_at }; }
+  private publicUser(user: UserRow) {
+    return {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      displayName: user.display_name ?? undefined,
+      phone: user.phone ?? undefined,
+      province: user.province ?? undefined,
+      createdAt: user.created_at ? new Date(user.created_at).toISOString() : undefined,
+    };
+  }
   private hash(password: string): string { const salt = randomBytes(16).toString('hex'); return `${salt}:${scryptSync(password, salt, 64).toString('hex')}`; }
   private verify(password: string, stored: string): boolean { const [salt, digest] = stored.split(':'); const candidate = scryptSync(password, salt, 64); const expected = Buffer.from(digest, 'hex'); return candidate.length === expected.length && timingSafeEqual(candidate, expected); }
   private tokenHash(token: string) { return createHash('sha256').update(token).digest('hex'); }
