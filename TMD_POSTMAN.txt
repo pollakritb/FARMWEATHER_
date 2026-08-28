@@ -1,0 +1,41 @@
+TMD Weather Forecast API - Postman Example
+==========================================
+
+Method: GET
+
+URL:
+https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/at
+
+Authorization:
+Type: Bearer Token
+Token: ใส่ Access Token ที่ได้รับจาก TMD
+
+Headers:
+Accept: application/json
+
+Query Params:
+lat       14.0208
+lon       100.525
+duration  24
+fields    tc,rh,rain,ws10m,wd10m,cond
+
+URL แบบรวม Query Params:
+https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/at?lat=14.0208&lon=100.525&duration=24&fields=tc,rh,rain,ws10m,wd10m,cond
+
+หมายเหตุ:
+- Request นี้ไม่มี Body
+- duration ในโปรเจกต์กำหนดไว้ไม่เกิน 48 ชั่วโมง
+- ลงทะเบียนและขอ Access Token: https://data.tmd.go.th/nwpapi/register
+- ความหมาย fields:
+  tc    = อุณหภูมิ
+  rh    = ความชื้นสัมพัทธ์
+  rain  = ปริมาณฝน
+  ws10m = ความเร็วลมที่ระดับ 10 เมตร
+  wd10m = ทิศทางลมที่ระดับ 10 เมตร
+  cond  = รหัสสภาพอากาศ
+
+cURL (นำเข้า Postman ได้ด้วย Import > Raw text):
+curl --request GET \
+  --url 'https://data.tmd.go.th/nwpapi/v1/forecast/location/hourly/at?lat=14.0208&lon=100.525&duration=24&fields=tc%2Crh%2Crain%2Cws10m%2Cwd10m%2Ccond' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer YOUR_TMD_ACCESS_TOKEN'

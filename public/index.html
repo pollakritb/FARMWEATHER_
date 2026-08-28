@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="FarmWeather — weather and crop-risk assistant for Thai farmers" />
+  <title>FarmWeather</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d'}},fontFamily:{sans:['Inter','Noto Sans Thai','sans-serif']}}}}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-900">
+  <div id="toast" class="pointer-events-none fixed right-4 top-4 z-[100] hidden max-w-sm rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl"></div>
+
+  <main id="auth-screen" class="grid min-h-screen lg:grid-cols-2">
+    <section class="hidden bg-brand-900 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+      <a class="text-xl font-bold">FarmWeather</a>
+      <div class="max-w-lg"><p class="mb-4 text-sm font-semibold uppercase tracking-[.2em] text-brand-100">Weather decisions made simple</p><h1 class="text-5xl font-bold leading-tight">วางแผนงานในแปลง<br />ด้วยข้อมูลที่เข้าใจง่าย</h1><p class="mt-6 text-lg leading-8 text-brand-100">ดูอากาศตามพิกัด วิเคราะห์ความเสี่ยงตามชนิดและระยะพืช แล้วรับคำแนะนำที่นำไปใช้ได้ทันที</p></div>
+      <p class="text-sm text-brand-100">ข้อมูลอากาศจากกรมอุตุนิยมวิทยา</p>
+    </section>
+    <section class="flex items-center justify-center p-5 sm:p-10">
+      <div class="w-full max-w-md">
+        <div class="mb-10 text-xl font-bold lg:hidden">FarmWeather</div>
+        <div id="auth-card" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <p id="auth-eyebrow" class="text-sm font-semibold text-brand-600">ยินดีต้อนรับกลับ</p>
+          <h1 id="auth-title" class="mt-2 text-3xl font-bold">เข้าสู่ระบบ</h1>
+          <p id="auth-description" class="mt-2 text-sm text-slate-500">เข้าสู่ระบบเพื่อดูแปลงและคำแนะนำของคุณ</p>
+          <div id="auth-tabs" class="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
+            <button data-auth-mode="login" class="auth-tab rounded-lg px-3 py-2 text-sm font-semibold">เข้าสู่ระบบ</button>
+            <button data-auth-mode="register" class="auth-tab rounded-lg px-3 py-2 text-sm font-semibold">สมัครสมาชิก</button>
+          </div>
+          <form id="auth-form" class="mt-6 space-y-4">
+            <label class="block text-sm font-medium">ชื่อผู้ใช้<input name="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+" autocomplete="username" class="field mt-2" placeholder="เช่น farmer01" /></label>
+            <label class="block text-sm font-medium">รหัสผ่าน<input name="password" required minlength="6" type="password" class="field mt-2" placeholder="อย่างน้อย 6 ตัวอักษร" /></label>
+            <label id="confirm-field" class="hidden text-sm font-medium">ยืนยันรหัสผ่าน<input name="confirmPassword" minlength="6" type="password" class="field mt-2" /></label>
+            <p id="auth-error" class="hidden rounded-lg bg-red-50 p-3 text-sm text-red-700"></p>
+            <button id="auth-submit" class="primary-btn w-full" type="submit">เข้าสู่ระบบ</button>
+            <button id="forgot-link" class="w-full text-sm font-medium text-brand-700 hover:underline" type="button">ลืมรหัสผ่าน?</button>
+          </form>
+          <form id="forgot-form" class="mt-6 hidden space-y-4"><label class="block text-sm font-medium">ชื่อผู้ใช้<input name="username" required class="field mt-2" /></label><button class="primary-btn w-full">ขอรหัสรีเซ็ต</button><button data-back-login class="secondary-btn w-full" type="button">กลับไปเข้าสู่ระบบ</button></form>
+          <form id="reset-form" class="mt-6 hidden space-y-4"><p class="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">ระบบ MVP จะแสดงรหัสรีเซ็ตให้คุณ รหัสมีอายุ 15 นาที</p><label class="block text-sm font-medium">รหัสรีเซ็ต<input name="token" required class="field mt-2" /></label><label class="block text-sm font-medium">รหัสผ่านใหม่<input name="newPassword" required minlength="6" type="password" class="field mt-2" /></label><button class="primary-btn w-full">ตั้งรหัสผ่านใหม่</button><button data-back-login class="secondary-btn w-full" type="button">กลับไปเข้าสู่ระบบ</button></form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-shell" class="hidden min-h-screen">
+    <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-slate-200 bg-white p-5 lg:flex lg:flex-col">
+      <a class="text-xl font-bold">FarmWeather</a>
+      <nav id="desktop-nav" class="mt-10 space-y-1"></nav>
+      <div class="mt-auto rounded-xl bg-slate-50 p-3"><p id="sidebar-user" class="truncate text-sm font-semibold"></p><p id="sidebar-role" class="text-xs text-slate-500"></p><button data-logout class="mt-3 text-sm font-semibold text-red-600">ออกจากระบบ</button></div>
+    </aside>
+    <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:ml-64 lg:px-8"><div><p class="text-sm font-bold text-brand-700 lg:hidden">FarmWeather</p><p id="page-title" class="font-bold">ภาพรวม</p><p id="page-subtitle" class="hidden text-xs text-slate-500 sm:block">ข้อมูลล่าสุดของระบบ</p></div><button data-logout class="secondary-btn !px-3 !py-2 lg:hidden">ออกจากระบบ</button></header>
+    <nav id="mobile-nav" class="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-slate-200 bg-white p-2 lg:hidden"></nav>
+
+    <main class="pb-24 lg:ml-64 lg:pb-8">
+      <section id="farmer-view" data-view class="p-4 sm:p-6 lg:p-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p class="text-sm font-semibold text-brand-600">MY FARM</p><h1 class="mt-1 text-2xl font-bold sm:text-3xl">แปลงเพาะปลูกของฉัน</h1><p class="mt-1 text-sm text-slate-500">เลือกแปลงเพื่อดูอากาศและวิเคราะห์ความเสี่ยง</p></div><button id="add-plot" class="primary-btn">+ เพิ่มแปลง</button></div>
+          <div id="farmer-empty" class="mt-8 hidden rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center"><div class="text-4xl">🌱</div><h2 class="mt-4 text-xl font-bold">ยังไม่มีแปลงเพาะปลูก</h2><p class="mt-2 text-sm text-slate-500">เพิ่มแปลงแรกเพื่อเริ่มดูข้อมูลอากาศตามพิกัด</p><button id="empty-add-plot" class="primary-btn mt-5">เพิ่มแปลงแรก</button></div>
+          <div id="farmer-content" class="mt-8 grid gap-6 xl:grid-cols-[280px_1fr]">
+            <aside class="card h-fit"><div class="mb-4 flex items-center justify-between"><h2 class="font-bold">รายการแปลง</h2><span id="plot-count" class="badge bg-slate-100 text-slate-600">0</span></div><div id="plot-list" class="space-y-2"></div></aside>
+            <div class="space-y-6">
+              <section class="card"><div class="flex flex-col justify-between gap-4 md:flex-row md:items-center"><div><p class="text-xs font-semibold uppercase tracking-wider text-brand-600">กำลังแสดงข้อมูล</p><h2 id="selected-name" class="mt-1 text-2xl font-bold">—</h2><p id="selected-meta" class="mt-1 text-sm text-slate-500">—</p></div><div class="flex flex-wrap gap-2"><button id="toggle-plot" class="secondary-btn">ปิดใช้งาน</button><button id="edit-plot" class="secondary-btn">แก้ไข</button><button id="delete-plot" class="danger-btn">ลบ</button></div></div></section>
+              <section><div class="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><p class="text-sm font-semibold text-brand-600">CURRENT WEATHER</p><h2 class="text-xl font-bold">สภาพอากาศปัจจุบัน</h2><p id="observation-meta" class="mt-1 text-xs text-slate-500">กำลังรอข้อมูลสถานี TMD</p></div><button id="refresh-weather" class="secondary-btn">อัปเดตข้อมูล TMD</button></div><div class="grid grid-cols-2 gap-3 lg:grid-cols-4"><article class="metric-card"><span>อุณหภูมิ</span><strong id="temperature">—</strong><small>°C</small></article><article class="metric-card"><span>ปริมาณฝน</span><strong id="rain">—</strong><small>มม.</small></article><article class="metric-card"><span>ความชื้น</span><strong id="humidity">—</strong><small>%</small></article><article class="metric-card"><span>ความเร็วลม</span><strong id="wind">—</strong><small>ม./วินาที</small></article></div></section>
+              <section class="card"><div class="flex items-center justify-between"><div><p class="text-sm font-semibold text-brand-600">FORECAST</p><h2 class="text-xl font-bold">พยากรณ์รายชั่วโมง</h2></div><span id="forecast-updated" class="text-xs text-slate-500">ยังไม่มีข้อมูล</span></div><div id="forecast-list" class="mt-5 flex gap-3 overflow-x-auto pb-2"></div></section>
+              <div class="grid gap-6 lg:grid-cols-2"><section class="card"><div class="flex items-center justify-between"><div><p class="text-sm font-semibold text-brand-600">RISK ANALYSIS</p><h2 class="text-xl font-bold">ความเสี่ยงและคำแนะนำ</h2></div><span id="risk-badge" class="badge bg-slate-100 text-slate-600">รอวิเคราะห์</span></div><div id="analysis-content" class="mt-5 text-sm text-slate-500">กดวิเคราะห์เพื่อดูคำแนะนำตามชนิดและระยะพืช</div><button id="run-analysis" class="primary-btn mt-5 w-full">วิเคราะห์ความเสี่ยง</button></section><section class="card"><div class="flex items-center justify-between"><div><p class="text-sm font-semibold text-brand-600">INBOX</p><h2 class="text-xl font-bold">การแจ้งเตือน</h2></div><span id="notification-count" class="badge bg-red-50 text-red-700">0</span></div><div id="notification-list" class="mt-5 space-y-3"></div></section></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="admin-view" data-view class="hidden p-4 sm:p-6 lg:p-8"><div class="mx-auto max-w-7xl"><p class="text-sm font-semibold text-violet-600">ADMIN</p><h1 class="mt-1 text-3xl font-bold">จัดการผู้ใช้</h1><p class="mt-1 text-sm text-slate-500">ตรวจสอบบัญชีและกำหนดสิทธิ์การใช้งาน</p><div class="mt-6 grid gap-4 sm:grid-cols-3"><article class="card"><p class="text-sm text-slate-500">ผู้ใช้ทั้งหมด</p><strong id="admin-total" class="mt-2 block text-3xl">0</strong></article><article class="card"><p class="text-sm text-slate-500">เกษตรกร</p><strong id="admin-farmers" class="mt-2 block text-3xl">0</strong></article><article class="card"><p class="text-sm text-slate-500">ผู้ดูแลระบบ</p><strong id="admin-admins" class="mt-2 block text-3xl">0</strong></article></div><section class="card mt-6 overflow-hidden !p-0"><div class="border-b border-slate-200 p-5"><h2 class="font-bold">บัญชีในระบบ</h2><p class="text-sm text-slate-500">เปลี่ยนบทบาทได้จากช่อง Role</p></div><div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-500"><tr><th class="px-5 py-3">ผู้ใช้</th><th class="px-5 py-3">ข้อมูลติดต่อ</th><th class="px-5 py-3">จังหวัด</th><th class="px-5 py-3">Role</th></tr></thead><tbody id="users-table" class="divide-y divide-slate-100"></tbody></table></div></section></div></section>
+
+      <section id="profile-view" data-view class="hidden p-4 sm:p-6 lg:p-8"><div class="mx-auto max-w-2xl"><p class="text-sm font-semibold text-brand-600">ACCOUNT</p><h1 class="mt-1 text-3xl font-bold">ข้อมูลส่วนตัว</h1><p class="mt-1 text-sm text-slate-500">ข้อมูลสำหรับระบุตัวตนและติดต่อเกษตรกร</p><form id="profile-form" class="card mt-6 space-y-5"><div class="grid gap-5 sm:grid-cols-2"><label class="text-sm font-medium">ชื่อผู้ใช้<input id="profile-username" disabled class="field mt-2 bg-slate-100" /></label><label class="text-sm font-medium">บทบาท<input id="profile-role" disabled class="field mt-2 bg-slate-100" /></label></div><label class="block text-sm font-medium">ชื่อที่ใช้แสดง<input name="displayName" class="field mt-2" placeholder="ชื่อ-นามสกุล" /></label><label class="block text-sm font-medium">เบอร์โทรศัพท์<input name="phone" class="field mt-2" placeholder="08x-xxx-xxxx" /></label><label class="block text-sm font-medium">จังหวัด<input name="province" class="field mt-2" placeholder="จังหวัดที่อาศัย" /></label><button class="primary-btn" type="submit">บันทึกข้อมูล</button></form></div></section>
+    </main>
+  </div>
+
+  <dialog id="plot-modal" class="w-[min(680px,calc(100%-2rem))] rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50"><form id="plot-form" class="bg-white"><div class="flex items-center justify-between border-b border-slate-200 p-5"><div><p class="text-sm font-semibold text-brand-600">CROP PLOT</p><h2 id="plot-modal-title" class="text-xl font-bold">เพิ่มแปลงเพาะปลูก</h2></div><button id="close-plot-modal" type="button" class="grid size-9 place-items-center rounded-lg hover:bg-slate-100">✕</button></div><div class="space-y-4 p-5"><input name="id" type="hidden" /><label class="block text-sm font-medium">ชื่อแปลง<input name="name" required maxlength="100" class="field mt-2" placeholder="เช่น แปลงข้าวเหนือคลอง" /></label><div class="grid gap-4 sm:grid-cols-2"><label class="text-sm font-medium">ชนิดพืช<select name="cropType" required class="field mt-2"></select></label><label class="text-sm font-medium">วันที่เริ่มปลูก<input name="plantedAt" required type="date" class="field mt-2" /></label></div><label class="block text-sm font-medium">จังหวัด<input name="province" class="field mt-2" placeholder="เช่น ปทุมธานี" /></label><div><div class="mb-2 flex items-center justify-between"><span class="text-sm font-medium">ตำแหน่งแปลง</span><button id="locate-button" type="button" class="text-sm font-semibold text-brand-700">ใช้ตำแหน่งปัจจุบัน</button></div><div id="plot-map" class="h-64 rounded-xl"></div><input name="latitude" type="hidden" required /><input name="longitude" type="hidden" required /><p id="coordinate-text" class="mt-2 text-xs text-slate-500">คลิกบนแผนที่เพื่อเลือกตำแหน่ง</p></div></div><div class="flex justify-end gap-3 border-t border-slate-200 p-5"><button id="cancel-plot" type="button" class="secondary-btn">ยกเลิก</button><button class="primary-btn" type="submit">บันทึกแปลง</button></div></form></dialog>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/app.js" defer></script>
+</body>
+</html>

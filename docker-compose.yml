@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: farmer
+      POSTGRES_PASSWORD: farmer
+      POSTGRES_DB: farmer_weather
+    ports:
+      - "5433:5432"
+    volumes:
+      - farmer_weather_data:/var/lib/postgresql/data
+
+  sonarqube:
+    image: sonarqube:community
+    profiles: [sonar]
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+volumes:
+  farmer_weather_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

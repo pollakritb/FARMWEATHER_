@@ -1,0 +1,1200 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FarmWeather API",
+    "description": "API contract for farmer accounts and profiles, role-based administration, crop-plot lifecycle management, persisted TMD observations and forecasts, growth-stage-aware risk analysis, and advisory notifications. This contract can run independently as a mock API with Stoplight Prism.",
+    "version": "0.2.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "NestJS development server"
+    },
+    {
+      "url": "http://127.0.0.1:4010",
+      "description": "Stoplight Prism mock server"
+    }
+  ],
+  "security": [{ "bearerAuth": [] }],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication, sessions and password recovery"
+    },
+    { "name": "profile", "description": "Farmer profile management" },
+    { "name": "admin", "description": "Administrator-only user management" },
+    {
+      "name": "crops",
+      "description": "Supported crops and growth-stage thresholds"
+    },
+    { "name": "health", "description": "Service health check" },
+    { "name": "plots", "description": "Crop plot management" },
+    { "name": "weather", "description": "Hourly weather forecasts from TMD" },
+    {
+      "name": "analysis",
+      "description": "Weather risk analysis and recommendations"
+    },
+    {
+      "name": "notifications",
+      "description": "Farmer advisory notification inbox"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "security": [],
+        "tags": ["health"],
+        "summary": "Check service health",
+        "operationId": "HealthController_check",
+        "responses": {
+          "200": {
+            "description": "The service is running.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthStatus" },
+                "example": {
+                  "status": "ok",
+                  "timestamp": "2026-07-31T08:30:00.000Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "AuthController_register",
+        "summary": "Register a farmer account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/AuthSuccess" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "AuthController_login",
+        "summary": "Log in and create a revocable session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/AuthSuccess" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "AuthController_logout",
+        "summary": "Revoke the current session",
+        "responses": {
+          "204": { "description": "Session revoked." },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "operationId": "AuthController_me",
+        "summary": "Get the signed-in user",
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfile" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/auth/forgot-password": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "AuthController_forgot",
+        "summary": "Create a 15-minute password-reset token",
+        "description": "The MVP returns resetToken when the account exists because no email/SMS provider is configured. Unknown usernames receive the same generic message without a token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ForgotPasswordRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reset request accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgotPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "AuthController_reset",
+        "summary": "Reset password and revoke all sessions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "newPassword"],
+                "properties": {
+                  "token": { "type": "string" },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Password changed." },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "tags": ["profile"],
+        "operationId": "AuthController_profile",
+        "summary": "Get farmer profile",
+        "responses": {
+          "200": {
+            "description": "Farmer profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfile" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["profile"],
+        "operationId": "AuthController_updateProfile",
+        "summary": "Update farmer profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateProfileRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated profile",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfile" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": ["admin"],
+        "operationId": "AuthController_users",
+        "summary": "List users (ADMIN only)",
+        "responses": {
+          "200": {
+            "description": "Users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfile" }
+                }
+              }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/admin/users/{id}/role": {
+      "patch": {
+        "tags": ["admin"],
+        "operationId": "AuthController_role",
+        "summary": "Change a user role (ADMIN only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": { "$ref": "#/components/schemas/UserRole" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated user" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/crops": {
+      "get": {
+        "tags": ["crops"],
+        "operationId": "CropsController_findAll",
+        "summary": "List supported crops, base thresholds and growth-stage boundaries",
+        "responses": {
+          "200": {
+            "description": "Crop catalogue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CropProfile" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plots": {
+      "get": {
+        "tags": ["plots"],
+        "summary": "List all crop plots",
+        "operationId": "PlotsController_findAll",
+        "responses": {
+          "200": {
+            "description": "All crop plots. The array is empty when no plots have been created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Plot" }
+                },
+                "example": [
+                  {
+                    "id": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                    "name": "แปลงข้าวเหนือคลอง",
+                    "latitude": 14.0208,
+                    "longitude": 100.525,
+                    "province": "ปทุมธานี",
+                    "cropType": "RICE",
+                    "plantedAt": "2026-07-01",
+                    "active": true,
+                    "createdAt": "2026-07-31T08:30:00.000Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["plots"],
+        "summary": "Create a crop plot",
+        "operationId": "PlotsController_create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreatePlotRequest" },
+              "example": {
+                "name": "แปลงข้าวเหนือคลอง",
+                "latitude": 14.0208,
+                "longitude": 100.525,
+                "province": "ปทุมธานี",
+                "cropType": "RICE",
+                "plantedAt": "2026-07-01"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The crop plot was created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Plot" },
+                "example": {
+                  "id": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                  "name": "แปลงข้าวเหนือคลอง",
+                  "latitude": 14.0208,
+                  "longitude": 100.525,
+                  "province": "ปทุมธานี",
+                  "cropType": "RICE",
+                  "plantedAt": "2026-07-01",
+                  "active": true,
+                  "createdAt": "2026-07-31T08:30:00.000Z"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/plots/{id}": {
+      "get": {
+        "tags": ["plots"],
+        "summary": "Get a crop plot by ID",
+        "operationId": "PlotsController_findOne",
+        "parameters": [{ "$ref": "#/components/parameters/PlotId" }],
+        "responses": {
+          "200": {
+            "description": "The requested crop plot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Plot" },
+                "example": {
+                  "id": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                  "name": "แปลงข้าวเหนือคลอง",
+                  "latitude": 14.0208,
+                  "longitude": 100.525,
+                  "province": "ปทุมธานี",
+                  "cropType": "RICE",
+                  "plantedAt": "2026-07-01",
+                  "active": true,
+                  "createdAt": "2026-07-31T08:30:00.000Z"
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
+        }
+      },
+      "patch": {
+        "tags": ["plots"],
+        "operationId": "PlotsController_update",
+        "summary": "Update a crop plot",
+        "parameters": [{ "$ref": "#/components/parameters/PlotId" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdatePlotRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated plot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Plot" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["plots"],
+        "operationId": "PlotsController_remove",
+        "summary": "Delete a crop plot and its persisted history",
+        "parameters": [{ "$ref": "#/components/parameters/PlotId" }],
+        "responses": {
+          "204": { "description": "Plot deleted." },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
+        }
+      }
+    },
+    "/api/plots/{id}/active": {
+      "patch": {
+        "tags": ["plots"],
+        "operationId": "PlotsController_setActive",
+        "summary": "Activate or deactivate a crop plot",
+        "parameters": [{ "$ref": "#/components/parameters/PlotId" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["active"],
+                "properties": { "active": { "type": "boolean" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated plot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Plot" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/current": {
+      "get": {
+        "tags": ["weather"],
+        "operationId": "WeatherController_getCurrent",
+        "summary": "Get the latest observation from the nearest TMD station",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": {
+            "description": "Current observation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentWeatherObservation"
+                }
+              }
+            }
+          },
+          "503": { "$ref": "#/components/responses/TmdUnavailable" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/current/refresh": {
+      "post": {
+        "tags": ["weather"],
+        "operationId": "WeatherController_refreshCurrent",
+        "summary": "Refresh the nearest-station observation",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "201": {
+            "description": "Fresh observation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentWeatherObservation"
+                }
+              }
+            }
+          },
+          "503": { "$ref": "#/components/responses/TmdUnavailable" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/history/hourly": {
+      "get": {
+        "tags": ["weather"],
+        "operationId": "WeatherController_history",
+        "summary": "Read persisted forecast snapshots",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": {
+            "description": "Up to 500 persisted forecast snapshots, newest fetch first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/HourlyForecast" }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/history/observations": {
+      "get": {
+        "tags": ["weather"],
+        "operationId": "WeatherController_observationHistory",
+        "summary": "Read persisted station observations",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": {
+            "description": "Observation history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CurrentWeatherObservation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/hourly": {
+      "get": {
+        "tags": ["weather"],
+        "summary": "Get hourly forecasts for a crop plot",
+        "description": "Returns a fresh cached forecast when available; otherwise retrieves hourly forecast data from TMD.",
+        "operationId": "WeatherController_getHourly",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/HourlyForecastList" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" },
+          "503": { "$ref": "#/components/responses/TmdUnavailable" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/weather/refresh": {
+      "post": {
+        "tags": ["weather"],
+        "summary": "Refresh hourly forecasts for a crop plot",
+        "description": "Forces retrieval of new hourly forecast data from TMD and replaces the cached forecast.",
+        "operationId": "WeatherController_refresh",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "201": { "$ref": "#/components/responses/HourlyForecastList" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" },
+          "503": { "$ref": "#/components/responses/TmdUnavailable" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/analysis/run": {
+      "post": {
+        "tags": ["analysis"],
+        "summary": "Run weather risk analysis for a crop plot",
+        "description": "Evaluates the plot's hourly forecasts against risk rules and creates notifications for medium or high risks.",
+        "operationId": "AnalysisController_run",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "201": { "$ref": "#/components/responses/AnalysisResultList" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" },
+          "503": { "$ref": "#/components/responses/TmdUnavailable" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/analysis": {
+      "get": {
+        "tags": ["analysis"],
+        "summary": "Get the latest risk analysis for a crop plot",
+        "operationId": "AnalysisController_findByPlot",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/AnalysisResultList" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
+        }
+      }
+    },
+    "/api/plots/{plotId}/notifications": {
+      "get": {
+        "tags": ["notifications"],
+        "summary": "List notifications for a crop plot",
+        "operationId": "NotificationsController_findByPlot",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": {
+            "description": "Notifications associated with the crop plot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Notification" }
+                },
+                "example": [
+                  {
+                    "id": "fa59e90b-08da-463d-8049-a105732388d6",
+                    "plotId": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                    "analysisId": "6decb95f-2738-433d-b566-b479f18f2da7",
+                    "severity": "HIGH",
+                    "title": "ความเสี่ยงสภาพอากาศระดับ HIGH",
+                    "message": "เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ",
+                    "status": "PENDING",
+                    "createdAt": "2026-07-31T08:31:00.000Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plots/{plotId}/analysis/history": {
+      "get": {
+        "tags": ["analysis"],
+        "operationId": "AnalysisController_history",
+        "summary": "Read persisted analysis history",
+        "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/AnalysisResultList" }
+        }
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "patch": {
+        "tags": ["notifications"],
+        "summary": "Mark a notification as read",
+        "operationId": "NotificationsController_markRead",
+        "parameters": [{ "$ref": "#/components/parameters/NotificationId" }],
+        "responses": {
+          "200": {
+            "description": "The updated notification.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Notification" },
+                "example": {
+                  "id": "fa59e90b-08da-463d-8049-a105732388d6",
+                  "plotId": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                  "analysisId": "6decb95f-2738-433d-b566-b479f18f2da7",
+                  "severity": "HIGH",
+                  "title": "ความเสี่ยงสภาพอากาศระดับ HIGH",
+                  "message": "เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ",
+                  "status": "READ",
+                  "createdAt": "2026-07-31T08:31:00.000Z",
+                  "readAt": "2026-07-31T08:35:00.000Z"
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotificationNotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "signed session token"
+      }
+    },
+    "parameters": {
+      "PlotId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Unique crop plot identifier.",
+        "schema": { "type": "string", "format": "uuid" },
+        "example": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d"
+      },
+      "PlotPathId": {
+        "name": "plotId",
+        "in": "path",
+        "required": true,
+        "description": "Unique crop plot identifier.",
+        "schema": { "type": "string", "format": "uuid" },
+        "example": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d"
+      },
+      "NotificationId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Unique notification identifier.",
+        "schema": { "type": "string", "format": "uuid" },
+        "example": "fa59e90b-08da-463d-8049-a105732388d6"
+      }
+    },
+    "schemas": {
+      "UserRole": { "type": "string", "enum": ["FARMER", "ADMIN"] },
+      "AuthRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 30,
+            "pattern": "^[a-zA-Z0-9_]+$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 100,
+            "format": "password"
+          }
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "required": ["id", "username", "role"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "username": { "type": "string" },
+          "role": { "$ref": "#/components/schemas/UserRole" },
+          "displayName": { "type": "string" },
+          "phone": { "type": "string" },
+          "province": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "required": ["token", "user"],
+        "properties": {
+          "token": { "type": "string" },
+          "user": { "$ref": "#/components/schemas/UserProfile" }
+        }
+      },
+      "ForgotPasswordRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["username"],
+        "properties": { "username": { "type": "string" } }
+      },
+      "ForgotPasswordResponse": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": { "type": "string" },
+          "resetToken": {
+            "type": "string",
+            "description": "Development-only one-time token; omitted when username is unknown."
+          },
+          "expiresInSeconds": { "type": "integer", "example": 900 }
+        }
+      },
+      "UpdateProfileRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "displayName": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "phone": { "type": "string", "minLength": 1, "maxLength": 30 },
+          "province": { "type": "string", "minLength": 1, "maxLength": 100 }
+        }
+      },
+      "CropType": {
+        "type": "string",
+        "enum": ["RICE", "CORN", "CASSAVA", "SUGARCANE", "DURIAN"]
+      },
+      "CropProfile": {
+        "type": "object",
+        "required": ["code", "name", "thresholds", "growthStageDays"],
+        "properties": {
+          "code": { "$ref": "#/components/schemas/CropType" },
+          "name": { "type": "string" },
+          "thresholds": {
+            "type": "object",
+            "required": [
+              "heavyRainMmPerHour",
+              "highTemperatureC",
+              "lowHumidityPct",
+              "strongWindMs"
+            ],
+            "properties": {
+              "heavyRainMmPerHour": { "type": "number" },
+              "highTemperatureC": { "type": "number" },
+              "lowHumidityPct": { "type": "number" },
+              "strongWindMs": { "type": "number" }
+            }
+          },
+          "growthStageDays": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": { "type": "integer" },
+            "description": "End days for seedling, vegetative and reproductive stages."
+          }
+        }
+      },
+      "HealthStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "timestamp"],
+        "properties": {
+          "status": { "type": "string", "enum": ["ok"], "example": "ok" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreatePlotRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "latitude", "longitude", "cropType", "plantedAt"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "แปลงข้าวเหนือคลอง"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -90,
+            "maximum": 90,
+            "example": 14.0208
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -180,
+            "maximum": 180,
+            "example": 100.525
+          },
+          "province": { "type": "string", "example": "ปทุมธานี" },
+          "cropType": { "$ref": "#/components/schemas/CropType" },
+          "plantedAt": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-07-01"
+          }
+        }
+      },
+      "Plot": {
+        "allOf": [
+          { "$ref": "#/components/schemas/CreatePlotRequest" },
+          {
+            "type": "object",
+            "required": ["id", "active", "createdAt"],
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "active": { "type": "boolean", "example": true },
+              "createdAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        ]
+      },
+      "UpdatePlotRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+          "province": { "type": "string" },
+          "cropType": { "$ref": "#/components/schemas/CropType" },
+          "plantedAt": { "type": "string", "format": "date" },
+          "active": { "type": "boolean" }
+        }
+      },
+      "CurrentWeatherObservation": {
+        "type": "object",
+        "required": [
+          "plotId",
+          "observedAt",
+          "fetchedAt",
+          "stationId",
+          "stationName",
+          "province",
+          "stationDistanceKm",
+          "source"
+        ],
+        "properties": {
+          "plotId": { "type": "string", "format": "uuid" },
+          "observedAt": { "type": "string", "format": "date-time" },
+          "fetchedAt": { "type": "string", "format": "date-time" },
+          "stationId": { "type": "string" },
+          "stationName": { "type": "string" },
+          "province": { "type": "string" },
+          "stationDistanceKm": { "type": "number" },
+          "temperatureC": { "type": "number" },
+          "relativeHumidityPct": { "type": "number" },
+          "rainfallMm": { "type": "number" },
+          "windSpeedMs": { "type": "number" },
+          "windDirectionDeg": { "type": "number" },
+          "source": { "type": "string", "enum": ["TMD_STATION"] }
+        }
+      },
+      "HourlyForecast": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["plotId", "forecastAt", "fetchedAt", "source"],
+        "properties": {
+          "plotId": { "type": "string", "format": "uuid" },
+          "forecastAt": { "type": "string", "format": "date-time" },
+          "fetchedAt": { "type": "string", "format": "date-time" },
+          "temperatureC": {
+            "type": "number",
+            "format": "float",
+            "description": "Air temperature in degrees Celsius.",
+            "example": 32.5
+          },
+          "relativeHumidityPct": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 100,
+            "example": 78
+          },
+          "rainMm": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "description": "Hourly rainfall in millimetres.",
+            "example": 12.4
+          },
+          "windSpeedMs": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "description": "Wind speed in metres per second.",
+            "example": 4.2
+          },
+          "windDirectionDeg": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 360,
+            "example": 180
+          },
+          "conditionCode": { "type": "integer", "example": 8 },
+          "source": { "type": "string", "enum": ["TMD"], "example": "TMD" }
+        }
+      },
+      "RiskLevel": {
+        "type": "string",
+        "enum": ["LOW", "MEDIUM", "HIGH"]
+      },
+      "GrowthStage": {
+        "type": "string",
+        "enum": ["SEEDLING", "VEGETATIVE", "REPRODUCTIVE", "MATURITY"]
+      },
+      "AnalysisResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "plotId",
+          "forecastAt",
+          "riskLevel",
+          "growthStage",
+          "triggeredRules",
+          "recommendations",
+          "createdAt"
+        ],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "plotId": { "type": "string", "format": "uuid" },
+          "forecastAt": { "type": "string", "format": "date-time" },
+          "riskLevel": { "$ref": "#/components/schemas/RiskLevel" },
+          "growthStage": { "$ref": "#/components/schemas/GrowthStage" },
+          "triggeredRules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "HEAVY_RAIN",
+                "HIGH_TEMPERATURE",
+                "LOW_HUMIDITY",
+                "STRONG_WIND"
+              ]
+            },
+            "example": ["HEAVY_RAIN"]
+          },
+          "recommendations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ"]
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "plotId",
+          "analysisId",
+          "severity",
+          "title",
+          "message",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "plotId": { "type": "string", "format": "uuid" },
+          "analysisId": { "type": "string", "format": "uuid" },
+          "severity": { "$ref": "#/components/schemas/RiskLevel" },
+          "title": {
+            "type": "string",
+            "example": "ความเสี่ยงสภาพอากาศระดับ HIGH"
+          },
+          "message": {
+            "type": "string",
+            "example": "เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ"
+          },
+          "status": { "type": "string", "enum": ["PENDING", "READ"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "readAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statusCode", "message", "error"],
+        "properties": {
+          "statusCode": { "type": "integer" },
+          "message": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          },
+          "error": { "type": "string" }
+        }
+      }
+    },
+    "responses": {
+      "AuthSuccess": {
+        "description": "Authentication succeeded and a revocable seven-day session was created.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AuthResponse" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Bearer token is missing, expired, invalid or revoked.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "The authenticated user does not have the required role.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request body failed validation.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": {
+              "statusCode": 400,
+              "message": ["latitude must be a latitude string or number"],
+              "error": "Bad Request"
+            }
+          }
+        }
+      },
+      "PlotNotFound": {
+        "description": "The crop plot was not found.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": {
+              "statusCode": 404,
+              "message": "Plot 7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d not found",
+              "error": "Not Found"
+            }
+          }
+        }
+      },
+      "NotificationNotFound": {
+        "description": "The notification was not found.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": {
+              "statusCode": 404,
+              "message": "Notification fa59e90b-08da-463d-8049-a105732388d6 not found",
+              "error": "Not Found"
+            }
+          }
+        }
+      },
+      "TmdUnavailable": {
+        "description": "TMD configuration is missing or the upstream TMD API is unavailable.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": {
+              "statusCode": 503,
+              "message": "Unable to connect to TMD API",
+              "error": "Service Unavailable"
+            }
+          }
+        }
+      },
+      "HourlyForecastList": {
+        "description": "Up to 24 hourly forecasts for the crop plot.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/HourlyForecast" }
+            },
+            "example": [
+              {
+                "plotId": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                "forecastAt": "2026-07-31T09:00:00.000Z",
+                "fetchedAt": "2026-07-31T08:30:30.000Z",
+                "temperatureC": 32.5,
+                "relativeHumidityPct": 78,
+                "rainMm": 12.4,
+                "windSpeedMs": 4.2,
+                "windDirectionDeg": 180,
+                "conditionCode": 8,
+                "source": "TMD"
+              }
+            ]
+          }
+        }
+      },
+      "AnalysisResultList": {
+        "description": "Risk analysis results for the crop plot's hourly forecasts.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/AnalysisResult" }
+            },
+            "example": [
+              {
+                "id": "6decb95f-2738-433d-b566-b479f18f2da7",
+                "plotId": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+                "forecastAt": "2026-07-31T09:00:00.000Z",
+                "riskLevel": "HIGH",
+                "growthStage": "VEGETATIVE",
+                "triggeredRules": ["HEAVY_RAIN"],
+                "recommendations": ["เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ"],
+                "createdAt": "2026-07-31T08:31:00.000Z"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

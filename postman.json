@@ -1,0 +1,454 @@
+{
+  "info": {
+    "name": "FarmWeather API - Postman Compatible",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "bearerToken",
+      "value": ""
+    },
+    {
+      "key": "plotId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d"
+    },
+    {
+      "key": "userId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d"
+    },
+    {
+      "key": "notificationId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d"
+    }
+  ],
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Register a farmer account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"string\",\n  \"password\": \"string\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Log in and create a revocable session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"farmer\",\n  \"password\": \"Farmer123!\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) pm.collectionVariables.set(\"bearerToken\", json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Revoke the current session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/logout"
+          },
+          "response": []
+        },
+        {
+          "name": "Get the signed-in user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/me"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a 15-minute password-reset token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"string\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset password and revoke all sessions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"string\",\n  \"newPassword\": \"string\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "item": [
+        {
+          "name": "Get farmer profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/profile"
+          },
+          "response": []
+        },
+        {
+          "name": "Update farmer profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"string\",\n  \"phone\": \"string\",\n  \"province\": \"string\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "admin",
+      "item": [
+        {
+          "name": "List users (ADMIN only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/users"
+          },
+          "response": []
+        },
+        {
+          "name": "Change a user role (ADMIN only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/users/{{userId}}/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"FARMER\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "crops",
+      "item": [
+        {
+          "name": "List supported crops, base thresholds and growth-stage boundaries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/crops"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "item": [
+        {
+          "name": "Check service health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "plots",
+      "item": [
+        {
+          "name": "List all crop plots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a crop plot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/plots",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"แปลงข้าวเหนือคลอง\",\n  \"latitude\": 14.0208,\n  \"longitude\": 100.525,\n  \"province\": \"ปทุมธานี\",\n  \"cropType\": \"RICE\",\n  \"plantedAt\": \"2026-07-01\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get a crop plot by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a crop plot",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"string\",\n  \"latitude\": -90,\n  \"longitude\": -180,\n  \"province\": \"string\",\n  \"cropType\": \"RICE\",\n  \"plantedAt\": \"2026-08-08\",\n  \"active\": true\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a crop plot and its persisted history",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Activate or deactivate a crop plot",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/active",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": true\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "item": [
+        {
+          "name": "Get the latest observation from the nearest TMD station",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/current"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh the nearest-station observation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/current/refresh"
+          },
+          "response": []
+        },
+        {
+          "name": "Read persisted forecast snapshots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/history/hourly"
+          },
+          "response": []
+        },
+        {
+          "name": "Read persisted station observations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/history/observations"
+          },
+          "response": []
+        },
+        {
+          "name": "Get hourly forecasts for a crop plot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/hourly"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh hourly forecasts for a crop plot",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/weather/refresh"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "analysis",
+      "item": [
+        {
+          "name": "Run weather risk analysis for a crop plot",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/analysis/run"
+          },
+          "response": []
+        },
+        {
+          "name": "Get the latest risk analysis for a crop plot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/analysis"
+          },
+          "response": []
+        },
+        {
+          "name": "Read persisted analysis history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/analysis/history"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "List notifications for a crop plot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/plots/{{plotId}}/notifications"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark a notification as read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/{{notificationId}}/read"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4445 @@
+{
+  "item": [
+    {
+      "name": "auth",
+      "description": "Authentication, sessions and password recovery",
+      "item": [
+        {
+          "id": "987cad68-2e18-47dd-82da-39246a6beb83",
+          "name": "Register a farmer account",
+          "request": {
+            "name": "Register a farmer account",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"farmer_test\",\n  \"password\": \"Farmer123!\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f61305bd-cc3c-4b17-936a-0b748bcd3a22",
+              "name": "Authentication succeeded and a revocable seven-day session was created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"H_ip5jkLl0\",\n  \"password\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"<string>\",\n  \"user\": {\n    \"id\": \"<uuid>\",\n    \"username\": \"<string>\",\n    \"role\": \"ADMIN\",\n    \"displayName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"province\": \"<string>\",\n    \"createdAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5e7d4c3c-8695-4ee4-b37f-b11a08fc47fa",
+              "name": "The request body failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"H_ip5jkLl0\",\n  \"password\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Register สำเร็จ\", function () { pm.expect(pm.response.code).to.equal(201); });",
+                  "const body = pm.response.json();",
+                  "if (body.token) pm.collectionVariables.set(\"bearerToken\", body.token);"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "41958f2f-a7a9-4e4a-99ab-c4d54be59bb4",
+          "name": "Log in and create a revocable session",
+          "request": {
+            "name": "Log in and create a revocable session",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"farmer\",\n  \"password\": \"Farmer123!\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "338d8829-a95d-4ce9-b7d6-e5e6224ce8a8",
+              "name": "Authentication succeeded and a revocable seven-day session was created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"H_ip5jkLl0\",\n  \"password\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"<string>\",\n  \"user\": {\n    \"id\": \"<uuid>\",\n    \"username\": \"<string>\",\n    \"role\": \"ADMIN\",\n    \"displayName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"province\": \"<string>\",\n    \"createdAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "96a3ec23-8548-4df4-bab8-a5cd3daf9894",
+              "name": "Bearer token is missing, expired, invalid or revoked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"H_ip5jkLl0\",\n  \"password\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login สำเร็จ\", function () { pm.expect(pm.response.code).to.equal(200); });",
+                  "const body = pm.response.json();",
+                  "if (body.token) pm.collectionVariables.set(\"bearerToken\", body.token);"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "52c852da-808f-4ebd-89f7-b35f3fa5d109",
+          "name": "Revoke the current session",
+          "request": {
+            "name": "Revoke the current session",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b7200035-6916-4379-84b7-d4a0b3f46c15",
+              "name": "Session revoked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "9072bfa9-878d-4df3-b7a0-a9f4229e47f9",
+              "name": "Bearer token is missing, expired, invalid or revoked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "84dcf1cb-d128-48de-b5ea-d90f9ca8cc55",
+          "name": "Get the signed-in user",
+          "request": {
+            "name": "Get the signed-in user",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "be50e3e4-0b2f-4bfe-ae9d-4ae579e25a6a",
+              "name": "Current user",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"<uuid>\",\n  \"username\": \"<string>\",\n  \"role\": \"ADMIN\",\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\",\n  \"createdAt\": \"<dateTime>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cac8cb5a-27fd-45ea-b0c8-97f96c5ccc84",
+              "name": "Bearer token is missing, expired, invalid or revoked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0da3fcc2-ad98-4fdf-95ca-66917de6dced",
+          "name": "Create a 15-minute password-reset token",
+          "request": {
+            "name": "Create a 15-minute password-reset token",
+            "description": {
+              "content": "The MVP returns resetToken when the account exists because no email/SMS provider is configured. Unknown usernames receive the same generic message without a token.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b98b40a1-299f-448d-93ea-d1ce17b97c72",
+              "name": "Reset request accepted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "forgot-password"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"<string>\",\n  \"resetToken\": \"<string>\",\n  \"expiresInSeconds\": \"<integer>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6326ffd2-c950-480a-9b37-837a33ebefa8",
+              "name": "The request body failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "forgot-password"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cdcf3407-df81-4c21-85e7-02fcbc3550f0",
+          "name": "Reset password and revoke all sessions",
+          "request": {
+            "name": "Reset password and revoke all sessions",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<string>\",\n  \"newPassword\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7ef52d90-be5d-4ff6-955e-caef867048c2",
+              "name": "Password changed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "reset-password"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"token\": \"<string>\",\n  \"newPassword\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [],
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b577bd8c-d235-4c7f-a0cc-da41a64e68f2",
+              "name": "The request body failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "auth",
+                    "reset-password"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"token\": \"<string>\",\n  \"newPassword\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "description": "Farmer profile management",
+      "item": [
+        {
+          "id": "7decdcb3-a6b3-4dac-94d3-177842d95c4c",
+          "name": "Get farmer profile",
+          "request": {
+            "name": "Get farmer profile",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "profile"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c0d288d9-6cee-49bf-acfd-463ee7f716f5",
+              "name": "Farmer profile",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "profile"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"<uuid>\",\n  \"username\": \"<string>\",\n  \"role\": \"ADMIN\",\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\",\n  \"createdAt\": \"<dateTime>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "794fe13f-6aa2-47ef-818e-7f5567bca35b",
+          "name": "Update farmer profile",
+          "request": {
+            "name": "Update farmer profile",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "profile"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c5a8576c-5ca6-449d-af9a-bb98effd980b",
+              "name": "Updated profile",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "profile"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"<uuid>\",\n  \"username\": \"<string>\",\n  \"role\": \"ADMIN\",\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\",\n  \"createdAt\": \"<dateTime>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ac1687cf-8105-4ae7-ab5f-9c3d8f262541",
+              "name": "The request body failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "profile"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"displayName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"province\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin",
+      "description": "Administrator-only user management",
+      "item": [
+        {
+          "id": "9580c33e-ff76-4e83-8939-be7d5192172c",
+          "name": "List users (ADMIN only)",
+          "request": {
+            "name": "List users (ADMIN only)",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "dbd882d9-98c8-4984-9ef1-58f27ee25362",
+              "name": "Users",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"username\": \"<string>\",\n    \"role\": \"ADMIN\",\n    \"displayName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"province\": \"<string>\",\n    \"createdAt\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"username\": \"<string>\",\n    \"role\": \"FARMER\",\n    \"displayName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"province\": \"<string>\",\n    \"createdAt\": \"<dateTime>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f4930ebf-13b0-42d5-b87d-845f0c361328",
+              "name": "The authenticated user does not have the required role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) { const body = pm.response.json(); const users = Array.isArray(body) ? body : body.data; if (users?.[0]?.id) pm.collectionVariables.set(\"userId\", users[0].id); }"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a34d8727-ef9b-4b82-ad3a-b7ba38e1e37d",
+          "name": "Change a user role (ADMIN only)",
+          "request": {
+            "name": "Change a user role (ADMIN only)",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":id",
+                "role"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{userId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"FARMER\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2459028c-2462-4eb2-bb38-570fc1e72032",
+              "name": "Updated user",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":id",
+                    "role"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role\": \"FARMER\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ca896aed-ea9d-496d-a4f8-326976589976",
+              "name": "The authenticated user does not have the required role.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":id",
+                    "role"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role\": \"FARMER\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "crops",
+      "description": "Supported crops and growth-stage thresholds",
+      "item": [
+        {
+          "id": "5da618db-5dfa-4f0d-832c-2b0285398505",
+          "name": "List supported crops, base thresholds and growth-stage boundaries",
+          "request": {
+            "name": "List supported crops, base thresholds and growth-stage boundaries",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "crops"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "94c562dc-8a46-4c8c-88f4-d57638951a16",
+              "name": "Crop catalogue",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "crops"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"code\": \"DURIAN\",\n    \"name\": \"<string>\",\n    \"thresholds\": {\n      \"heavyRainMmPerHour\": \"<number>\",\n      \"highTemperatureC\": \"<number>\",\n      \"lowHumidityPct\": \"<number>\",\n      \"strongWindMs\": \"<number>\"\n    },\n    \"growthStageDays\": [\n      \"<integer>\",\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  },\n  {\n    \"code\": \"CORN\",\n    \"name\": \"<string>\",\n    \"thresholds\": {\n      \"heavyRainMmPerHour\": \"<number>\",\n      \"highTemperatureC\": \"<number>\",\n      \"lowHumidityPct\": \"<number>\",\n      \"strongWindMs\": \"<number>\"\n    },\n    \"growthStageDays\": [\n      \"<integer>\",\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "description": "Service health check",
+      "item": [
+        {
+          "id": "55de3b93-b09c-455a-8e3f-a43e2a34867e",
+          "name": "Check service health",
+          "request": {
+            "name": "Check service health",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "health"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4863b24c-0494-4c5c-a1f8-67c2d5bc0096",
+              "name": "The service is running.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "health"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"<dateTime>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "plots",
+      "description": "Crop plot management",
+      "item": [
+        {
+          "id": "94ca4bbb-efa4-4efb-bdb7-4fb79cff2a2f",
+          "name": "List all crop plots",
+          "request": {
+            "name": "List all crop plots",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1b720ced-4c23-4981-9a1d-d6430ce9a9c8",
+              "name": "All crop plots. The array is empty when no plots have been created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"active\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"cropType\": \"CASSAVA\",\n    \"id\": \"<uuid>\",\n    \"latitude\": \"<double>\",\n    \"longitude\": \"<double>\",\n    \"name\": \"<string>\",\n    \"plantedAt\": \"<date>\",\n    \"province\": \"<string>\"\n  },\n  {\n    \"active\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"cropType\": \"RICE\",\n    \"id\": \"<uuid>\",\n    \"latitude\": \"<double>\",\n    \"longitude\": \"<double>\",\n    \"name\": \"<string>\",\n    \"plantedAt\": \"<date>\",\n    \"province\": \"<string>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "674c8117-8e3c-4536-b1e6-14f65321a02f",
+          "name": "Create a crop plot",
+          "request": {
+            "name": "Create a crop plot",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "81bcddaa-c5af-49f7-a923-12e6617974e7",
+              "name": "The crop plot was created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"cropType\": \"RICE\",\n  \"id\": \"<uuid>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"name\": \"<string>\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "266247d2-3891-4f3d-b37c-5a1bd5e2060a",
+              "name": "The request body failed validation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"สร้างแปลงสำเร็จ\", function () { pm.expect(pm.response.code).to.equal(201); });",
+                  "const body = pm.response.json();",
+                  "if (body.id) pm.collectionVariables.set(\"plotId\", body.id);"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c6a9002b-313a-454b-94b5-a1270bf3af30",
+          "name": "Get a crop plot by ID",
+          "request": {
+            "name": "Get a crop plot by ID",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2d5c70a5-225a-4d54-ad3e-2510961835e1",
+              "name": "The requested crop plot.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"cropType\": \"RICE\",\n  \"id\": \"<uuid>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"name\": \"<string>\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8812d3cf-2e14-4d3c-8c86-5575a8ba08fe",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cfeb1ef6-078a-416c-b557-ba604a466384",
+          "name": "Update a crop plot",
+          "request": {
+            "name": "Update a crop plot",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<number>\",\n  \"longitude\": \"<number>\",\n  \"province\": \"<string>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"active\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "431bcf4b-c449-4d79-92b2-a52da38a8f88",
+              "name": "Updated plot",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<number>\",\n  \"longitude\": \"<number>\",\n  \"province\": \"<string>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"active\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"cropType\": \"RICE\",\n  \"id\": \"<uuid>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"name\": \"<string>\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "75219d4d-7a7a-4b86-ba39-eb495a40ebf5",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"latitude\": \"<number>\",\n  \"longitude\": \"<number>\",\n  \"province\": \"<string>\",\n  \"cropType\": \"DURIAN\",\n  \"plantedAt\": \"<date>\",\n  \"active\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bacb3b00-361f-4fa0-bfd0-b4a81b8e6f13",
+          "name": "Delete a crop plot and its persisted history",
+          "request": {
+            "name": "Delete a crop plot and its persisted history",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "975cb141-7a2a-44f0-881f-a216f495c8d0",
+              "name": "Plot deleted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ddce196d-ab1d-49b1-bbf9-191250df014d",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8061153b-6d63-462c-b01d-4b7a74413ba5",
+          "name": "Activate or deactivate a crop plot",
+          "request": {
+            "name": "Activate or deactivate a crop plot",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":id",
+                "active"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "da4b5f4a-8cf9-4ad4-9ee1-1efd97137b78",
+              "name": "Updated plot",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":id",
+                    "active"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"active\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"cropType\": \"RICE\",\n  \"id\": \"<uuid>\",\n  \"latitude\": \"<double>\",\n  \"longitude\": \"<double>\",\n  \"name\": \"<string>\",\n  \"plantedAt\": \"<date>\",\n  \"province\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "description": "Hourly weather forecasts from TMD",
+      "item": [
+        {
+          "id": "8d61bf3a-02b3-4b1c-a8c0-764d9de92903",
+          "name": "Get the latest observation from the nearest TMD station",
+          "request": {
+            "name": "Get the latest observation from the nearest TMD station",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "current"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2cb864c0-e7d2-430d-a171-1157cebd9828",
+              "name": "Current observation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "current"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"plotId\": \"<uuid>\",\n  \"observedAt\": \"<dateTime>\",\n  \"fetchedAt\": \"<dateTime>\",\n  \"stationId\": \"<string>\",\n  \"stationName\": \"<string>\",\n  \"province\": \"<string>\",\n  \"stationDistanceKm\": \"<number>\",\n  \"source\": \"TMD_STATION\",\n  \"temperatureC\": \"<number>\",\n  \"relativeHumidityPct\": \"<number>\",\n  \"rainfallMm\": \"<number>\",\n  \"windSpeedMs\": \"<number>\",\n  \"windDirectionDeg\": \"<number>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "28607c4a-83cb-4d01-910e-91563fc85226",
+              "name": "TMD configuration is missing or the upstream TMD API is unavailable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "current"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ba347fd5-c785-4703-a986-f80b9149d23a",
+          "name": "Refresh the nearest-station observation",
+          "request": {
+            "name": "Refresh the nearest-station observation",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "current",
+                "refresh"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "930588e8-2a2b-4ee4-ad77-76d54dc25340",
+              "name": "Fresh observation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "current",
+                    "refresh"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"plotId\": \"<uuid>\",\n  \"observedAt\": \"<dateTime>\",\n  \"fetchedAt\": \"<dateTime>\",\n  \"stationId\": \"<string>\",\n  \"stationName\": \"<string>\",\n  \"province\": \"<string>\",\n  \"stationDistanceKm\": \"<number>\",\n  \"source\": \"TMD_STATION\",\n  \"temperatureC\": \"<number>\",\n  \"relativeHumidityPct\": \"<number>\",\n  \"rainfallMm\": \"<number>\",\n  \"windSpeedMs\": \"<number>\",\n  \"windDirectionDeg\": \"<number>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2bb85a30-a5da-44cc-b181-36d2b6c07fbb",
+              "name": "TMD configuration is missing or the upstream TMD API is unavailable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "current",
+                    "refresh"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "78bdc3b8-12fb-4f79-b673-306efccf8cf3",
+          "name": "Read persisted forecast snapshots",
+          "request": {
+            "name": "Read persisted forecast snapshots",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "history",
+                "hourly"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "885be2ed-be36-426a-a718-a992d67888b6",
+              "name": "Up to 500 persisted forecast snapshots, newest fetch first.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "history",
+                    "hourly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  },\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "93802145-dab5-4031-907b-75aa8b7c0092",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "history",
+                    "hourly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e099d4e4-b785-41fb-977c-e3d47729246e",
+          "name": "Read persisted station observations",
+          "request": {
+            "name": "Read persisted station observations",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "history",
+                "observations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8adb80c1-ee24-4d7a-98ab-a495c1c2b126",
+              "name": "Observation history",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "history",
+                    "observations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"plotId\": \"<uuid>\",\n    \"observedAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"stationId\": \"<string>\",\n    \"stationName\": \"<string>\",\n    \"province\": \"<string>\",\n    \"stationDistanceKm\": \"<number>\",\n    \"source\": \"TMD_STATION\",\n    \"temperatureC\": \"<number>\",\n    \"relativeHumidityPct\": \"<number>\",\n    \"rainfallMm\": \"<number>\",\n    \"windSpeedMs\": \"<number>\",\n    \"windDirectionDeg\": \"<number>\"\n  },\n  {\n    \"plotId\": \"<uuid>\",\n    \"observedAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"stationId\": \"<string>\",\n    \"stationName\": \"<string>\",\n    \"province\": \"<string>\",\n    \"stationDistanceKm\": \"<number>\",\n    \"source\": \"TMD_STATION\",\n    \"temperatureC\": \"<number>\",\n    \"relativeHumidityPct\": \"<number>\",\n    \"rainfallMm\": \"<number>\",\n    \"windSpeedMs\": \"<number>\",\n    \"windDirectionDeg\": \"<number>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1cdca191-a67e-491f-a4d2-49600c28d5bd",
+          "name": "Get hourly forecasts for a crop plot",
+          "request": {
+            "name": "Get hourly forecasts for a crop plot",
+            "description": {
+              "content": "Returns a fresh cached forecast when available; otherwise retrieves hourly forecast data from TMD.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "hourly"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6f143d2b-ebcc-4383-b6f2-04673c762955",
+              "name": "Up to 24 hourly forecasts for the crop plot.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "hourly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  },\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "76ba7a78-d117-40b0-85a8-7d8f6197d750",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "hourly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "029108f2-5a36-4bf2-8bd4-9cdd0f626251",
+              "name": "TMD configuration is missing or the upstream TMD API is unavailable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "hourly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "af36a579-e74e-4886-a8c0-adb0024d963d",
+          "name": "Refresh hourly forecasts for a crop plot",
+          "request": {
+            "name": "Refresh hourly forecasts for a crop plot",
+            "description": {
+              "content": "Forces retrieval of new hourly forecast data from TMD and replaces the cached forecast.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "weather",
+                "refresh"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7a42fcf4-e145-498a-9f01-5346977514ea",
+              "name": "Up to 24 hourly forecasts for the crop plot.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "refresh"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  },\n  {\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"fetchedAt\": \"<dateTime>\",\n    \"source\": \"TMD\",\n    \"temperatureC\": \"<float>\",\n    \"relativeHumidityPct\": \"<float>\",\n    \"rainMm\": \"<float>\",\n    \"windSpeedMs\": \"<float>\",\n    \"windDirectionDeg\": \"<float>\",\n    \"conditionCode\": \"<integer>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b502cb4-c722-407a-a7d2-17dfa9daa0ee",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "refresh"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbb03d7b-16c0-4478-953b-700a4b73c1e3",
+              "name": "TMD configuration is missing or the upstream TMD API is unavailable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "weather",
+                    "refresh"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "analysis",
+      "description": "Weather risk analysis and recommendations",
+      "item": [
+        {
+          "id": "c06517c3-9517-4565-8ca3-19c1d1fd52fa",
+          "name": "Run weather risk analysis for a crop plot",
+          "request": {
+            "name": "Run weather risk analysis for a crop plot",
+            "description": {
+              "content": "Evaluates the plot's hourly forecasts against risk rules and creates notifications for medium or high risks.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "analysis",
+                "run"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d6a03cf3-03a5-49d6-bed1-bf155352ace5",
+              "name": "Risk analysis results for the crop plot's hourly forecasts.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis",
+                    "run"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"VEGETATIVE\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HIGH_TEMPERATURE\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"MATURITY\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HEAVY_RAIN\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8c9aef79-ba7d-463b-a394-23453ca3f689",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis",
+                    "run"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9fdfb853-25ea-4bab-bef8-dc6e8320145b",
+              "name": "TMD configuration is missing or the upstream TMD API is unavailable.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis",
+                    "run"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6fe743a0-7e23-46d6-9d74-4e5026160e51",
+          "name": "Get the latest risk analysis for a crop plot",
+          "request": {
+            "name": "Get the latest risk analysis for a crop plot",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "analysis"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "32e46131-51f3-4167-abc6-ea6daf49dea5",
+              "name": "Risk analysis results for the crop plot's hourly forecasts.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"VEGETATIVE\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HIGH_TEMPERATURE\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"MATURITY\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HEAVY_RAIN\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "590ff11e-f159-47de-8d45-2af417f96fe5",
+              "name": "The crop plot was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8ee4353c-63e8-4777-9740-0043371ab93f",
+          "name": "Read persisted analysis history",
+          "request": {
+            "name": "Read persisted analysis history",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "analysis",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4b329699-355d-48a5-a649-2b59aefc1e12",
+              "name": "Risk analysis results for the crop plot's hourly forecasts.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "analysis",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"VEGETATIVE\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HIGH_TEMPERATURE\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"forecastAt\": \"<dateTime>\",\n    \"riskLevel\": \"HIGH\",\n    \"growthStage\": \"MATURITY\",\n    \"triggeredRules\": [\n      \"HEAVY_RAIN\",\n      \"HEAVY_RAIN\"\n    ],\n    \"recommendations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"createdAt\": \"<dateTime>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "description": "Farmer advisory notification inbox",
+      "item": [
+        {
+          "id": "4bb780d0-0f63-415e-833e-2c963b70ae4b",
+          "name": "List notifications for a crop plot",
+          "request": {
+            "name": "List notifications for a crop plot",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "plots",
+                ":plotId",
+                "notifications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{plotId}}",
+                  "key": "plotId",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique crop plot identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e3cd293e-e7b0-457d-8dc6-6dcd5bc40f18",
+              "name": "Notifications associated with the crop plot.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "plots",
+                    ":plotId",
+                    "notifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique crop plot identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "plotId"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"analysisId\": \"<uuid>\",\n    \"severity\": \"HIGH\",\n    \"title\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"READ\",\n    \"createdAt\": \"<dateTime>\",\n    \"readAt\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"plotId\": \"<uuid>\",\n    \"analysisId\": \"<uuid>\",\n    \"severity\": \"HIGH\",\n    \"title\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"PENDING\",\n    \"createdAt\": \"<dateTime>\",\n    \"readAt\": \"<dateTime>\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) { const body = pm.response.json(); const rows = Array.isArray(body) ? body : body.data; if (rows?.[0]?.id) pm.collectionVariables.set(\"notificationId\", rows[0].id); }"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "457c7dd1-eae3-43fb-bf23-1f4794592abd",
+          "name": "Mark a notification as read",
+          "request": {
+            "name": "Mark a notification as read",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "notifications",
+                ":id",
+                "read"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "{{notificationId}}",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) Unique notification identifier.",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e49d6c1a-bea1-4e3b-a283-55c43bfb4871",
+              "name": "The updated notification.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "notifications",
+                    ":id",
+                    "read"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique notification identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"<uuid>\",\n  \"plotId\": \"<uuid>\",\n  \"analysisId\": \"<uuid>\",\n  \"severity\": \"MEDIUM\",\n  \"title\": \"<string>\",\n  \"message\": \"<string>\",\n  \"status\": \"PENDING\",\n  \"createdAt\": \"<dateTime>\",\n  \"readAt\": \"<dateTime>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7dc76d74-8226-4cdf-bd09-987e9fd51a4c",
+              "name": "The notification was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "notifications",
+                    ":id",
+                    "read"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Unique notification identifier.",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"error\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "type": "any",
+        "value": "{{bearerToken}}",
+        "key": "token"
+      }
+    ]
+  },
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "bearerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "plotId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "7ab2c909-4f4e-4fd1-8ca4-c07030a24c9d",
+      "type": "string"
+    }
+  ],
+  "info": {
+    "_postman_id": "1a2cd396-9475-4cf5-a002-e6cb1995d93d",
+    "name": "FarmWeather API - Ready to Test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API contract for farmer accounts and profiles, role-based administration, crop-plot lifecycle management, persisted TMD observations and forecasts, growth-stage-aware risk analysis, and advisory notifications. This contract can run independently as a mock API with Stoplight Prism.\n\nนำเข้า Collection นี้ใน Postman จากนั้นเรียก auth > Login ก่อน ระบบจะบันทึก Bearer token ให้อัตโนมัติ"
+  }
+}
