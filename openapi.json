@@ -78,7 +78,8 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/AuthSuccess" },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -98,6 +99,7 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/AuthSuccess" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -157,7 +159,8 @@
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -187,8 +190,23 @@
           }
         },
         "responses": {
-          "201": { "description": "Password changed." },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "201": {
+            "description": "Password changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["message"],
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -205,7 +223,8 @@
                 "schema": { "$ref": "#/components/schemas/UserProfile" }
               }
             }
-          }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       },
       "patch": {
@@ -229,7 +248,8 @@
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -250,6 +270,7 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "403": { "$ref": "#/components/responses/Forbidden" }
         }
       }
@@ -282,7 +303,16 @@
           }
         },
         "responses": {
-          "200": { "description": "Updated user" },
+          "200": {
+            "description": "Updated user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfile" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "403": { "$ref": "#/components/responses/Forbidden" }
         }
       }
@@ -303,7 +333,8 @@
                 }
               }
             }
-          }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -336,7 +367,8 @@
                 ]
               }
             }
-          }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       },
       "post": {
@@ -379,7 +411,8 @@
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -409,6 +442,7 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       },
@@ -434,6 +468,8 @@
               }
             }
           },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       },
@@ -444,6 +480,7 @@
         "parameters": [{ "$ref": "#/components/parameters/PlotId" }],
         "responses": {
           "204": { "description": "Plot deleted." },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
@@ -474,7 +511,10 @@
                 "schema": { "$ref": "#/components/schemas/Plot" }
               }
             }
-          }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
     },
@@ -495,6 +535,8 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" },
           "503": { "$ref": "#/components/responses/TmdUnavailable" }
         }
       }
@@ -516,6 +558,8 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" },
           "503": { "$ref": "#/components/responses/TmdUnavailable" }
         }
       }
@@ -538,6 +582,7 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
@@ -561,7 +606,9 @@
                 }
               }
             }
-          }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
     },
@@ -574,6 +621,7 @@
         "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
         "responses": {
           "200": { "$ref": "#/components/responses/HourlyForecastList" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" },
           "503": { "$ref": "#/components/responses/TmdUnavailable" }
         }
@@ -588,6 +636,7 @@
         "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
         "responses": {
           "201": { "$ref": "#/components/responses/HourlyForecastList" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" },
           "503": { "$ref": "#/components/responses/TmdUnavailable" }
         }
@@ -602,6 +651,7 @@
         "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
         "responses": {
           "201": { "$ref": "#/components/responses/AnalysisResultList" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" },
           "503": { "$ref": "#/components/responses/TmdUnavailable" }
         }
@@ -615,6 +665,7 @@
         "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
         "responses": {
           "200": { "$ref": "#/components/responses/AnalysisResultList" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
@@ -648,7 +699,9 @@
                 ]
               }
             }
-          }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
     },
@@ -659,7 +712,9 @@
         "summary": "Read persisted analysis history",
         "parameters": [{ "$ref": "#/components/parameters/PlotPathId" }],
         "responses": {
-          "200": { "$ref": "#/components/responses/AnalysisResultList" }
+          "200": { "$ref": "#/components/responses/AnalysisResultList" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/PlotNotFound" }
         }
       }
     },
@@ -689,6 +744,7 @@
               }
             }
           },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotificationNotFound" }
         }
       }
@@ -875,18 +931,50 @@
         }
       },
       "Plot": {
-        "allOf": [
-          { "$ref": "#/components/schemas/CreatePlotRequest" },
-          {
-            "type": "object",
-            "required": ["id", "active", "createdAt"],
-            "properties": {
-              "id": { "type": "string", "format": "uuid" },
-              "active": { "type": "boolean", "example": true },
-              "createdAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        ]
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "latitude",
+          "longitude",
+          "cropType",
+          "plantedAt",
+          "active",
+          "createdAt"
+        ],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "แปลงข้าวเหนือคลอง"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -90,
+            "maximum": 90,
+            "example": 14.0208
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -180,
+            "maximum": 180,
+            "example": 100.525
+          },
+          "province": { "type": "string", "example": "ปทุมธานี" },
+          "cropType": { "$ref": "#/components/schemas/CropType" },
+          "plantedAt": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-07-01"
+          },
+          "active": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
       },
       "UpdatePlotRequest": {
         "type": "object",
