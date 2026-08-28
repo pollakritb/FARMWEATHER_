@@ -21,13 +21,10 @@ export class AuthService {
   private readonly resetTokens = new Map<string, ResetToken>();
   private readonly secret: string;
   private readonly adminUsername?: string;
-  private readonly exposeResetToken: boolean;
 
   constructor(private readonly database: DatabaseService, config: ConfigService) {
     this.secret = config.get<string>('AUTH_SECRET', 'development-only-change-me');
     this.adminUsername = config.get<string>('ADMIN_USERNAME')?.toLowerCase();
-    this.exposeResetToken = config.get<string>('NODE_ENV') !== 'production'
-      && config.get<string>('EXPOSE_RESET_TOKEN', 'true').toLowerCase() === 'true';
   }
 
   async register(dto: AuthDto) {
@@ -92,8 +89,8 @@ export class AuthService {
       'INSERT INTO password_reset_tokens (token_hash,user_id,expires_at) VALUES ($1,$2,$3)',
       [hash, user.id, new Date(expiresAt)],
     ); else this.resetTokens.set(hash, { userId: user.id, expiresAt, used: false });
-    const response = { message: 'สร้างคำขอรีเซ็ตรหัสผ่านแล้ว', expiresInSeconds: 900 };
-    return this.exposeResetToken ? { ...response, resetToken: token } : response;
+    // MVP has no email/SMS provider; the client can display this one-time token.
+    return { message: 'สร้างคำขอรีเซ็ตรหัสผ่านแล้ว', resetToken: token, expiresInSeconds: 900 };
   }
 
   async resetPassword(token: string, newPassword: string) {

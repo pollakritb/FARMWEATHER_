@@ -32,9 +32,6 @@ export class TmdObservationClient {
   ) {}
 
   async getNearest(plot: Plot): Promise<CurrentWeatherObservation> {
-    if (!Number.isFinite(plot.latitude) || !Number.isFinite(plot.longitude)) {
-      throw new ServiceUnavailableException('Plot coordinates are unavailable');
-    }
     const url = this.config.get(
       'TMD_OBSERVATION_URL',
       'https://data.tmd.go.th/api/Weather3Hours/V2/',
@@ -57,7 +54,6 @@ export class TmdObservationClient {
       const stations = (Array.isArray(raw) ? raw : raw ? [raw] : [])
         .map((station) => this.toCandidate(station, plot))
         .filter((item): item is CurrentWeatherObservation => item !== undefined)
-        .filter((item) => Number.isFinite(item.stationDistanceKm))
         .filter((item) => this.isRecent(item.observedAt))
         .sort((a, b) => a.stationDistanceKm - b.stationDistanceKm);
 

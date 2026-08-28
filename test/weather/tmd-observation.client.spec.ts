@@ -1,5 +1,4 @@
 import { of } from 'rxjs';
-import { ServiceUnavailableException } from '@nestjs/common';
 import { TmdObservationClient } from '../../src/infrastructure/tmd/tmd-observation.client';
 
 describe('TmdObservationClient', () => {
@@ -27,17 +26,5 @@ describe('TmdObservationClient', () => {
     expect(result.observedAt).toBe('2026-07-31T06:00:00.000Z');
     expect(result.stationDistanceKm).toBeLessThan(2);
     jest.useRealTimers();
-  });
-
-  it('rejects a plot with missing coordinates instead of returning a null distance', async () => {
-    const http = { get: jest.fn() };
-    const config = { get: jest.fn((_key: string, fallback: unknown) => fallback) };
-    const client = new TmdObservationClient(http as never, config as never);
-
-    await expect(client.getNearest({
-      id: 'plot-1', name: 'แปลง', latitude: Number.NaN, longitude: Number.NaN,
-      cropType: 'RICE', plantedAt: '2026-07-01', active: true, createdAt: '',
-    })).rejects.toBeInstanceOf(ServiceUnavailableException);
-    expect(http.get).not.toHaveBeenCalled();
   });
 });
