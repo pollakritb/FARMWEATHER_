@@ -65,15 +65,27 @@ export class PlotsService {
 
   async update(id: string, dto: UpdatePlotDto, ownerId: string): Promise<Plot> {
     const current = await this.findOne(id, ownerId);
-    const updated = { ...current, ...dto };
+    const updated: Plot = {
+      ...current,
+      name: dto.name ?? current.name,
+      latitude: dto.latitude ?? current.latitude,
+      longitude: dto.longitude ?? current.longitude,
+      province: dto.province ?? current.province,
+      cropType: dto.cropType ?? current.cropType,
+      plantedAt: dto.plantedAt ?? current.plantedAt,
+      active: dto.active ?? current.active,
+    };
     if (this.database.enabled) {
-      await this.database.query(
+      const row = (await this.database.query<PlotRow>(
         `UPDATE plots SET name=$1, latitude=$2, longitude=$3, province=$4, crop_type=$5,
-         planted_at=$6, active=$7 WHERE id=$8 AND owner_id=$9`,
+         planted_at=$6, active=$7 WHERE id=$8 AND owner_id=$9 RETURNING *`,
         [updated.name, updated.latitude, updated.longitude, updated.province ?? null,
           updated.cropType, updated.plantedAt, updated.active, id, ownerId],
-      );
-    } else this.plots.set(id, updated);
+      ))[0];
+      if (!row) throw new NotFoundException(`Plot ${id} not found`);
+      return this.toPlot(row);
+    }
+    this.plots.set(id, updated);
     return updated;
   }
 

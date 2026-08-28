@@ -7,8 +7,17 @@ async function api(path, options = {}) {
   if (state.token) headers.Authorization = `Bearer ${state.token}`;
   const response = await fetch(`/api${path}`, { ...options, headers });
   const body = response.status === 204 ? null : await response.json().catch(() => ({}));
+  if (response.status === 401 && state.token) clearSession();
   if (!response.ok) throw new Error(Array.isArray(body?.message) ? body.message.join(', ') : body?.message || `เกิดข้อผิดพลาด (${response.status})`);
   return body;
+}
+
+function clearSession() {
+  state.token = null; state.user = null; state.plots = []; state.crops = []; state.selectedPlotId = null;
+  localStorage.removeItem('farmweather_token');
+  if ($('#plot-modal')?.open) $('#plot-modal').close();
+  $('#app-shell').classList.add('hidden'); $('#auth-screen').classList.remove('hidden');
+  setAuthMode('login');
 }
 
 function toast(message, error = false) {
@@ -51,7 +60,7 @@ function showAuthError(message) { $('#auth-error').textContent = message; $('#au
 
 async function submitForgot(event) {
   event.preventDefault();
-  try { const result = await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); if (result.resetToken) $('#reset-form [name=token]').value = result.resetToken; $('#forgot-form').classList.add('hidden'); $('#reset-form').classList.remove('hidden'); toast('สร้างรหัสรีเซ็ตแล้ว'); }
+  try { const result = await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); if (result.resetToken) { $('#reset-form [name=token]').value = result.resetToken; $('#forgot-form').classList.add('hidden'); $('#reset-form').classList.remove('hidden'); toast('สร้างรหัสรีเซ็ตแล้ว'); } else { setAuthMode('login'); toast('หากพบบัญชี ระบบได้ส่งขั้นตอนรีเซ็ตรหัสผ่านแล้ว'); } }
   catch (error) { toast(error.message, true); }
 }
 
@@ -62,11 +71,12 @@ async function submitReset(event) {
 }
 
 async function enterApp(user) {
-  state.user = user; $('#auth-screen').classList.add('hidden'); $('#app-shell').classList.remove('hidden');
+  state.user = user;
   $('#sidebar-user').textContent = user.displayName || user.username; $('#sidebar-role').textContent = user.role === 'ADMIN' ? 'ผู้ดูแลระบบ' : 'เกษตรกร';
   buildNavigation();
   await Promise.all([loadCrops(), loadProfile()]);
   if (user.role === 'ADMIN') { await showView('admin'); } else { await showView('farmer'); }
+  $('#auth-screen').classList.add('hidden'); $('#app-shell').classList.remove('hidden');
 }
 
 function buildNavigation() {
@@ -87,7 +97,7 @@ async function showView(name) {
   catch (error) { toast(error.message, true); }
 }
 
-async function logout() { try { await api('/auth/logout', { method: 'POST' }); } catch (_) {} state.token = null; state.user = null; localStorage.removeItem('farmweather_token'); location.reload(); }
+async function logout() { try { await api('/auth/logout', { method: 'POST' }); } catch (_) {} clearSession(); }
 
 async function loadProfile() {
   const profile = await api('/profile'); state.user = { ...state.user, ...profile };
@@ -157,4 +167,4 @@ $('#auth-form').addEventListener('submit',submitAuth); $('#forgot-form').addEven
 $$('[data-logout]').forEach((b)=>b.addEventListener('click',logout)); $('#profile-form').addEventListener('submit',saveProfile); $('#add-plot').addEventListener('click',()=>openPlotModal()); $('#empty-add-plot').addEventListener('click',()=>openPlotModal()); $('#edit-plot').addEventListener('click',()=>openPlotModal(selectedPlot())); $('#toggle-plot').addEventListener('click',togglePlot); $('#delete-plot').addEventListener('click',deletePlot); $('#close-plot-modal').addEventListener('click',()=>$('#plot-modal').close()); $('#cancel-plot').addEventListener('click',()=>$('#plot-modal').close()); $('#plot-form').addEventListener('submit',savePlot); $('#locate-button').addEventListener('click',()=>navigator.geolocation?.getCurrentPosition((p)=>setPosition(p.coords.latitude,p.coords.longitude,true),()=>toast('ไม่สามารถอ่านตำแหน่งได้',true))); $('#refresh-weather').addEventListener('click',refreshWeather); $('#run-analysis').addEventListener('click',runAnalysis);
 
 setAuthMode('login');
-if(state.token) api('/auth/me').then(enterApp).catch(()=>{localStorage.removeItem('farmweather_token');state.token=null;});
+if(state.token) api('/auth/me').then(enterApp).catch(()=>clearSession());

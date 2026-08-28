@@ -1,0 +1,812 @@
+{
+  "summary": {
+    "baseUrl": "http://localhost:3000",
+    "testedAt": "2026-08-28T17:04:45.208Z",
+    "requests": 12,
+    "passed": 12,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "register test account",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "status": 201,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "token": "eyJpZCI6IjI0MDhlNTNkLWFkMmYtNGE1NS1hZjk4LTkxZDM4OGJkYTEzNiIsInVzZXJuYW1lIjoicmVnXzkzNjY4NDk4NyIsInJvbGUiOiJGQVJNRVIiLCJzZXNzaW9uSWQiOiJhZDcyYzIyNS00MzYxLTQ4YjAtOGE1OS0wMzY1MWNhOTJmMTQiLCJleHAiOjE3ODg1NDE0ODUxODB9.NMPuq29gCxa11kisTGfctstRno7bYmbKlKc0wcE3A9E",
+        "user": {
+          "id": "2408e53d-ad2f-4a55-af98-91d388bda136",
+          "username": "reg_936684987",
+          "role": "FARMER"
+        }
+      }
+    },
+    {
+      "name": "create Plot response schema",
+      "method": "POST",
+      "path": "/api/plots",
+      "status": 201,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "id": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "name": "แปลง regression",
+        "latitude": 14.0208,
+        "longitude": 100.525,
+        "province": "ปทุมธานี",
+        "cropType": "RICE",
+        "plantedAt": "2026-07-01",
+        "active": true,
+        "createdAt": "2026-08-28T17:04:45.190Z"
+      }
+    },
+    {
+      "name": "get Plot response schema",
+      "method": "GET",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+      "status": 200,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "id": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "name": "แปลง regression",
+        "latitude": 14.0208,
+        "longitude": 100.525,
+        "province": "ปทุมธานี",
+        "cropType": "RICE",
+        "plantedAt": "2026-07-01",
+        "active": true,
+        "createdAt": "2026-08-28T17:04:45.190Z"
+      }
+    },
+    {
+      "name": "partial PATCH preserves Plot fields",
+      "method": "PATCH",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+      "status": 200,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "id": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "name": "แปลง regression แก้ชื่อ",
+        "latitude": 14.0208,
+        "longitude": 100.525,
+        "province": "ปทุมธานี",
+        "cropType": "RICE",
+        "plantedAt": "2026-07-01",
+        "active": true,
+        "createdAt": "2026-08-28T17:04:45.190Z"
+      }
+    },
+    {
+      "name": "active PATCH complete Plot response",
+      "method": "PATCH",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/active",
+      "status": 200,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "id": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "name": "แปลง regression แก้ชื่อ",
+        "latitude": 14.0208,
+        "longitude": 100.525,
+        "province": "ปทุมธานี",
+        "cropType": "RICE",
+        "plantedAt": "2026-07-01",
+        "active": false,
+        "createdAt": "2026-08-28T17:04:45.190Z"
+      }
+    },
+    {
+      "name": "current weather finite distance",
+      "method": "GET",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/weather/current",
+      "status": 200,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "observedAt": "2026-08-28T17:04:45.198Z",
+        "fetchedAt": "2026-08-28T17:04:45.198Z",
+        "stationId": "DEMO",
+        "stationName": "สถานีสาธิต FarmWeather",
+        "province": "ปทุมธานี",
+        "stationDistanceKm": 3.2,
+        "temperatureC": 31.4,
+        "relativeHumidityPct": 74,
+        "rainfallMm": 0.8,
+        "windSpeedMs": 2.7,
+        "windDirectionDeg": 210,
+        "source": "TMD_STATION"
+      }
+    },
+    {
+      "name": "refresh current weather finite distance",
+      "method": "POST",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/weather/current/refresh",
+      "status": 201,
+      "pass": true,
+      "schemaErrors": [],
+      "body": {
+        "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+        "observedAt": "2026-08-28T17:04:45.200Z",
+        "fetchedAt": "2026-08-28T17:04:45.200Z",
+        "stationId": "DEMO",
+        "stationName": "สถานีสาธิต FarmWeather",
+        "province": "ปทุมธานี",
+        "stationDistanceKm": 3.2,
+        "temperatureC": 31.4,
+        "relativeHumidityPct": 74,
+        "rainfallMm": 0.8,
+        "windSpeedMs": 2.7,
+        "windDirectionDeg": 210,
+        "source": "TMD_STATION"
+      }
+    },
+    {
+      "name": "observation history schema",
+      "method": "GET",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/weather/history/observations",
+      "status": 200,
+      "pass": true,
+      "schemaErrors": [],
+      "body": [
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "observedAt": "2026-08-28T17:04:45.200Z",
+          "fetchedAt": "2026-08-28T17:04:45.200Z",
+          "stationId": "DEMO",
+          "stationName": "สถานีสาธิต FarmWeather",
+          "province": "ปทุมธานี",
+          "stationDistanceKm": 3.2,
+          "temperatureC": 31.4,
+          "relativeHumidityPct": 74,
+          "rainfallMm": 0.8,
+          "windSpeedMs": 2.7,
+          "windDirectionDeg": 210,
+          "source": "TMD_STATION"
+        }
+      ]
+    },
+    {
+      "name": "hourly forecast after partial PATCH",
+      "method": "POST",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/weather/refresh",
+      "status": 201,
+      "pass": true,
+      "schemaErrors": [],
+      "body": [
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T17:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T18:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T19:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T20:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T21:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T22:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T23:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T00:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T01:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T02:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T03:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T04:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T05:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T06:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 34,
+          "relativeHumidityPct": 86,
+          "rainMm": 3,
+          "windSpeedMs": 4.2,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T07:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 34,
+          "relativeHumidityPct": 86,
+          "rainMm": 3,
+          "windSpeedMs": 4.2,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T08:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 34,
+          "relativeHumidityPct": 86,
+          "rainMm": 3,
+          "windSpeedMs": 4.2,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T09:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 34,
+          "relativeHumidityPct": 86,
+          "rainMm": 12,
+          "windSpeedMs": 4.2,
+          "windDirectionDeg": 225,
+          "conditionCode": 7,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T10:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 34,
+          "relativeHumidityPct": 86,
+          "rainMm": 3,
+          "windSpeedMs": 4.2,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T11:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T12:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 29,
+          "relativeHumidityPct": 68,
+          "rainMm": 0,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 1,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T13:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T14:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T15:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T16:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        },
+        {
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T17:00:00.000Z",
+          "fetchedAt": "2026-08-28T17:04:45.203Z",
+          "temperatureC": 25,
+          "relativeHumidityPct": 86,
+          "rainMm": 1,
+          "windSpeedMs": 2.1,
+          "windDirectionDeg": 225,
+          "conditionCode": 5,
+          "source": "TMD"
+        }
+      ]
+    },
+    {
+      "name": "analysis after partial PATCH",
+      "method": "POST",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde/analysis/run",
+      "status": 201,
+      "pass": true,
+      "schemaErrors": [],
+      "body": [
+        {
+          "id": "dbab20cc-3cd8-4bc3-9350-218a6be1998e",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T17:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "167a69c6-2a9e-4727-9359-7567042429f5",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T18:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "cf1adf1e-9ff4-4ad1-8a29-44f495b570fd",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T19:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "ede0fd2b-78bf-4d18-b357-ce0a4bcd0843",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T20:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "cc2f5706-f178-48dc-a26e-a62039b7a0ed",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T21:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "ff0aead7-a859-42f1-bf9f-74f2690f3d57",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T22:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "93703364-960d-4f1d-a2ea-b4d391ff274c",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-28T23:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "1256995a-3918-40fb-9436-e773ad6a5af8",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T00:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "6fd19d91-6dbf-4433-8149-18e4f0913ee4",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T01:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "3f1daa68-b456-421c-823c-3dadffa3226b",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T02:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "013f180e-33b0-4fa5-8907-b65a91fdcd90",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T03:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "13466ecf-4847-4396-890e-bf6ffe12c5f1",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T04:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "5f13372f-942c-4bd7-9922-2531d3e13d27",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T05:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "8a21fb2a-3d7c-48b6-82d9-dcf5e90e8942",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T06:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "9913d83d-6b25-43fc-9e66-9092459b637f",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T07:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "6a923e86-fc45-44b0-b597-84059c696d49",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T08:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "6a54654c-074c-423d-ae18-360293130960",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T09:00:00.000Z",
+          "riskLevel": "HIGH",
+          "triggeredRules": [
+            "HEAVY_RAIN"
+          ],
+          "recommendations": [
+            "เลื่อนการฉีดพ่นและตรวจระบบระบายน้ำ"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "73e46ea7-f115-4734-a80a-783f1c7b9b45",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T10:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "cad00c94-b0a9-4888-94f4-ff106bb03457",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T11:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "01a6abea-04d5-44ed-ba0b-818ef592252c",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T12:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "88a81e92-a76a-447e-9bb9-b08d5f951d92",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T13:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "6f32058d-557c-4e03-bf99-d633609f774b",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T14:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "085eeaf7-c4ef-4114-a24a-0752aad2722d",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T15:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "9c8f9bfb-33b5-4a27-86ba-603d886ad45e",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T16:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        },
+        {
+          "id": "9a568b67-178e-43b4-8b60-a925bb1d3862",
+          "plotId": "b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+          "forecastAt": "2026-08-29T17:00:00.000Z",
+          "riskLevel": "LOW",
+          "triggeredRules": [],
+          "recommendations": [
+            "ยังไม่พบความเสี่ยงจากเกณฑ์เบื้องต้น"
+          ],
+          "growthStage": "VEGETATIVE",
+          "createdAt": "2026-08-28T17:04:45.206Z"
+        }
+      ]
+    },
+    {
+      "name": "delete regression plot",
+      "method": "DELETE",
+      "path": "/api/plots/b1f3cd48-b8b4-403c-adab-6b0967fd7fde",
+      "status": 204,
+      "pass": true,
+      "schemaErrors": []
+    },
+    {
+      "name": "logout regression account",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "status": 204,
+      "pass": true,
+      "schemaErrors": []
+    }
+  ]
+}

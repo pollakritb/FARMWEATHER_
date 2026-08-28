@@ -21,6 +21,8 @@ Seeder สร้าง `admin` และ `farmer` โดยอ่าน username
 
 ระบบใช้ PostgreSQL เมื่อกำหนด `DATABASE_URL` และสร้างตารางผู้ใช้ แปลง session ประวัติอากาศ ผลวิเคราะห์ และ notification ให้อัตโนมัติ หากไม่กำหนดจะ fallback เป็น in-memory สำหรับการพัฒนา
 
+Production ต้องกำหนด `DATABASE_URL`; ระบบจะหยุดทำงานตั้งแต่เริ่มต้นหากไม่มีฐานข้อมูล เพื่อป้องกันบัญชี session และข้อมูลแปลงสูญหายระหว่าง serverless instances. ใช้ `ALLOW_IN_MEMORY_STORAGE=true` ได้เฉพาะ preview ที่ยอมให้ข้อมูลสูญหายเท่านั้น
+
 เปิดหน้าเว็บที่ `http://localhost:3000`, Swagger ที่ `http://localhost:3000/docs` และ health check ที่ `GET /api/health`
 
 ## วิเคราะห์คุณภาพโค้ดด้วย SonarQube
@@ -93,6 +95,8 @@ API ส่วนใหญ่ต้องส่ง `Authorization: Bearer <token>
 ตั้ง `WEATHER_DEMO_MODE=false` เพื่อบังคับให้เรียก TMD จริงและให้ระบบตอบ `503` เมื่อยังไม่ได้ตั้ง token หรือเปิด `WEATHER_DEMO_MODE=true` เพื่อใช้ข้อมูล demo แม้มี token อยู่
 
 หน้า “สภาพอากาศปัจจุบัน” ใช้ข้อมูลตรวจวัด Weather3Hours จากสถานี TMD ที่มีอุณหภูมิล่าสุดและอยู่ใกล้พิกัดแปลงที่สุด พร้อมแสดงชื่อสถานี ระยะทาง และเวลาตรวจวัด ส่วน “พยากรณ์รายชั่วโมง” ใช้แบบจำลอง NWP จึงเป็นคนละชุดข้อมูลกัน
+
+`resetToken` จะแสดงใน response เฉพาะ development ที่ `EXPOSE_RESET_TOKEN=true`; production จะไม่ส่ง token กลับทาง API และควรเชื่อม email/SMS provider ก่อนเปิด password recovery ให้ผู้ใช้จริง
 
 ## ทดลอง flow
 

@@ -875,18 +875,20 @@
         }
       },
       "Plot": {
-        "allOf": [
-          { "$ref": "#/components/schemas/CreatePlotRequest" },
-          {
-            "type": "object",
-            "required": ["id", "active", "createdAt"],
-            "properties": {
-              "id": { "type": "string", "format": "uuid" },
-              "active": { "type": "boolean", "example": true },
-              "createdAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        ]
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "latitude", "longitude", "cropType", "plantedAt", "active", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+          "province": { "type": "string" },
+          "cropType": { "$ref": "#/components/schemas/CropType" },
+          "plantedAt": { "type": "string", "format": "date" },
+          "active": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
       },
       "UpdatePlotRequest": {
         "type": "object",
