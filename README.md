@@ -4,6 +4,27 @@ NestJS backend สำหรับบัญชีเกษตรกรและ�
 
 ## Quick start
 
+รันทั้ง API และ PostgreSQL ด้วย Docker:
+
+```bash
+docker compose up --build -d
+docker compose ps
+```
+
+เปิดหน้าเว็บที่ `http://localhost:3000`, Swagger ที่ `http://localhost:3000/docs`
+และ health check ที่ `http://localhost:3000/api/health` ดู log หรือหยุดระบบได้ด้วย:
+
+```bash
+docker compose logs -f app
+docker compose down
+```
+
+Compose ใช้ demo weather เป็นค่าเริ่มต้น หากต้องการใช้ TMD จริงให้กำหนด
+`TMD_ACCESS_TOKEN` และ `WEATHER_DEMO_MODE=false` ใน `.env` รวมถึงควรเปลี่ยน
+`AUTH_SECRET` ก่อนนำไปรันบน server ค่า port ฝั่งเครื่องเปลี่ยนได้ด้วย `APP_PORT`
+
+หากต้องการรันแบบ local development โดยใช้เฉพาะ PostgreSQL ใน Docker:
+
 ```bash
 cp .env.example .env
 npm run db:up

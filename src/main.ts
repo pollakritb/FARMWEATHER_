@@ -2,15 +2,23 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.disable('x-powered-by');
+  app.use(helmet({ contentSecurityPolicy: { directives: {
+    defaultSrc: ["'self'"], scriptSrc: ["'self'", 'https://unpkg.com'],
+    styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+    connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"],
+  } }}));
   app.useStaticAssets(join(process.cwd(), 'public'));
   app.setGlobalPrefix('api');
-  app.enableCors();
+  const origins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(',').map((origin) => origin.trim());
+  app.enableCors({ origin: origins, methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'] });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
   );
@@ -18,7 +26,7 @@ async function bootstrap() {
   const contract = JSON.parse(
     readFileSync(join(process.cwd(), 'openapi.json'), 'utf8'),
   ) as OpenAPIObject;
-  SwaggerModule.setup('docs', app, contract);
+  if (process.env.NODE_ENV !== 'production') SwaggerModule.setup('docs', app, contract);
 
   await app.listen(process.env.PORT ?? 3000);
 }

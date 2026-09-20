@@ -1,4 +1,25 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://farmer:farmer@postgres:5432/farmer_weather
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET to a random value of at least 32 characters}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      WEATHER_DEMO_MODE: ${WEATHER_DEMO_MODE:-true}
+      TMD_ACCESS_TOKEN: ${TMD_ACCESS_TOKEN:-}
+      TMD_OBSERVATION_UID: ${TMD_OBSERVATION_UID:-api}
+      TMD_OBSERVATION_UKEY: ${TMD_OBSERVATION_UKEY:-api12345}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   postgres:
     image: postgres:16-alpine
     environment:
@@ -6,9 +27,15 @@ services:
       POSTGRES_PASSWORD: farmer
       POSTGRES_DB: farmer_weather
     ports:
-      - "5433:5432"
+      - "${POSTGRES_BIND_ADDRESS:-127.0.0.1}:5433:5432"
     volumes:
       - farmer_weather_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farmer -d farmer_weather"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
 
   sonarqube:
     image: sonarqube:community

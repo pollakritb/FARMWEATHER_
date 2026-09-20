@@ -1,0 +1,16 @@
+.git
+.git-push
+.agents
+.codex
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.env
+.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+Dockerfile*
+README.md
+test

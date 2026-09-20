@@ -7,6 +7,13 @@ import { DatabaseService } from '../src/infrastructure/database/database.service
 async function freshSeed() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL is required for db:fresh');
+  const adminUsername = process.env.SEED_ADMIN_USERNAME;
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const farmerUsername = process.env.SEED_FARMER_USERNAME;
+  const farmerPassword = process.env.SEED_FARMER_PASSWORD;
+  if (!adminUsername || !adminPassword || !farmerUsername || !farmerPassword) {
+    throw new Error('SEED_ADMIN_USERNAME, SEED_ADMIN_PASSWORD, SEED_FARMER_USERNAME, and SEED_FARMER_PASSWORD are required');
+  }
 
   const pool = new Pool({ connectionString });
   try {
@@ -19,21 +26,21 @@ async function freshSeed() {
   try {
     const auth = app.get(AuthService);
     await auth.register({
-      username: process.env.SEED_ADMIN_USERNAME ?? 'admin',
-      password: process.env.SEED_ADMIN_PASSWORD ?? 'Admin123!',
+      username: adminUsername,
+      password: adminPassword,
     });
     const database = app.get(DatabaseService);
     await database.query('UPDATE users SET role=$1 WHERE username=$2', [
       'ADMIN',
-      (process.env.SEED_ADMIN_USERNAME ?? 'admin').toLowerCase(),
+      adminUsername.toLowerCase(),
     ]);
     await auth.register({
-      username: process.env.SEED_FARMER_USERNAME ?? 'farmer',
-      password: process.env.SEED_FARMER_PASSWORD ?? 'Farmer123!',
+      username: farmerUsername,
+      password: farmerPassword,
     });
     console.log('Database reset and seed completed.');
-    console.log(`Admin: ${process.env.SEED_ADMIN_USERNAME ?? 'admin'}`);
-    console.log(`Farmer: ${process.env.SEED_FARMER_USERNAME ?? 'farmer'}`);
+    console.log(`Admin: ${adminUsername}`);
+    console.log(`Farmer: ${farmerUsername}`);
   } finally {
     await app.close();
   }

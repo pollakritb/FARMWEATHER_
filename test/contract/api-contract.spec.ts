@@ -44,7 +44,7 @@ describe('API behavior against the OpenAPI contract', () => {
   beforeAll(async () => {
     delete process.env.DATABASE_URL;
     process.env.WEATHER_DEMO_MODE = 'true';
-    process.env.AUTH_SECRET = 'test-secret';
+    process.env.AUTH_SECRET = 'test-secret-with-at-least-32-characters';
 
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication<NestExpressApplication>();
@@ -101,7 +101,7 @@ describe('API behavior against the OpenAPI contract', () => {
   it('matches auth and plot request/response contracts', async () => {
     const badRegister = await request<{ statusCode: number }>(baseUrl, '/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ username: 'farmer_a', password: 'secret123', extra: true }),
+      body: JSON.stringify({ username: 'farmer_a', password: 'SecretPassword123', extra: true }),
     });
     expect(badRegister.status).toBe(400);
 
@@ -110,7 +110,7 @@ describe('API behavior against the OpenAPI contract', () => {
       user: { id: string; username: string; role: string };
     }>(baseUrl, '/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ username: 'farmer_a', password: 'secret123' }),
+      body: JSON.stringify({ username: 'farmer_a', password: 'SecretPassword123' }),
     });
     expect(register.status).toBe(201);
     expect(register.body).toMatchObject({

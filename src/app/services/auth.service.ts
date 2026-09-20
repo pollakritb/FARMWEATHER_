@@ -20,11 +20,10 @@ export class AuthService {
   private readonly sessions = new Map<string, Session>();
   private readonly resetTokens = new Map<string, ResetToken>();
   private readonly secret: string;
-  private readonly adminUsername?: string;
 
   constructor(private readonly database: DatabaseService, config: ConfigService) {
-    this.secret = config.get<string>('AUTH_SECRET', 'development-only-change-me');
-    this.adminUsername = config.get<string>('ADMIN_USERNAME')?.toLowerCase();
+    this.secret = config.get<string>('AUTH_SECRET') ?? '';
+    if (this.secret.length < 32) throw new Error('AUTH_SECRET must contain at least 32 characters');
   }
 
   async register(dto: AuthDto) {
@@ -32,7 +31,7 @@ export class AuthService {
     if (await this.findByUsername(username)) throw new BadRequestException('ชื่อผู้ใช้นี้ถูกใช้แล้ว');
     const user: UserRow = {
       id: randomUUID(), username, password_hash: this.hash(dto.password),
-      role: username === this.adminUsername ? 'ADMIN' : 'FARMER',
+      role: 'FARMER',
     };
     if (this.database.enabled) {
       await this.database.query('INSERT INTO users (id, username, password_hash, role) VALUES ($1,$2,$3,$4)', [user.id, user.username, user.password_hash, user.role]);
@@ -50,11 +49,15 @@ export class AuthService {
     try {
       const [payload, signature] = token.split('.');
       const expected = this.sign(payload);
-      if (!signature || signature.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) throw new Error();
+      if (signature?.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+        throw new Error('Invalid token signature');
+      }
       const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString()) as AuthUser & { exp: number };
-      if (parsed.exp < Date.now() || !(await this.isSessionActive(parsed.sessionId, parsed.id))) throw new Error();
+      if (parsed.exp < Date.now() || !(await this.isSessionActive(parsed.sessionId, parsed.id))) {
+        throw new Error('Expired or revoked token');
+      }
       const user = await this.findById(parsed.id);
-      if (!user) throw new Error();
+      if (!user) throw new Error('Token user does not exist');
       return { id: user.id, username: user.username, role: user.role, sessionId: parsed.sessionId };
     } catch { throw new UnauthorizedException('กรุณาเข้าสู่ระบบใหม่'); }
   }
@@ -90,7 +93,7 @@ export class AuthService {
       [hash, user.id, new Date(expiresAt)],
     ); else this.resetTokens.set(hash, { userId: user.id, expiresAt, used: false });
     // MVP has no email/SMS provider; the client can display this one-time token.
-    return { message: 'สร้างคำขอรีเซ็ตรหัสผ่านแล้ว', resetToken: token, expiresInSeconds: 900 };
+    return { message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว' };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -160,6 +163,7 @@ export class AuthService {
 
   private async isSessionActive(id: string, userId: string): Promise<boolean> {
     if (this.database.enabled) return Boolean((await this.database.query('SELECT 1 FROM auth_sessions WHERE id=$1 AND user_id=$2 AND revoked_at IS NULL AND expires_at>now()', [id, userId]))[0]);
-    const session = this.sessions.get(id); return Boolean(session && session.userId === userId && !session.revokedAt && session.expiresAt > Date.now());
+    const session = this.sessions.get(id);
+    return Boolean(session?.userId === userId && !session?.revokedAt && (session?.expiresAt ?? 0) > Date.now());
   }
 }

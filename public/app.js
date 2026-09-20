@@ -1,4 +1,4 @@
-const state = { token: localStorage.getItem('farmweather_token'), user: null, plots: [], crops: [], selectedPlotId: null, authMode: 'login', map: null, marker: null };
+const state = { token: null, user: null, plots: [], crops: [], selectedPlotId: null, authMode: 'login', map: null, marker: null };
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -42,7 +42,7 @@ async function submitAuth(event) {
   event.preventDefault(); const form = new FormData(event.currentTarget); const payload = Object.fromEntries(form.entries());
   if (state.authMode === 'register' && payload.password !== payload.confirmPassword) return showAuthError('รหัสผ่านทั้งสองช่องไม่ตรงกัน');
   delete payload.confirmPassword; const button = $('#auth-submit'); busy(button, true, 'กำลังดำเนินการ…');
-  try { const result = await api(`/auth/${state.authMode}`, { method: 'POST', body: JSON.stringify(payload) }); state.token = result.token; localStorage.setItem('farmweather_token', result.token); await enterApp(result.user); }
+  try { const result = await api(`/auth/${state.authMode}`, { method: 'POST', body: JSON.stringify(payload) }); state.token = result.token; await enterApp(result.user); }
   catch (error) { showAuthError(error.message); }
   finally { busy(button, false, state.authMode === 'register' ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'); }
 }
@@ -51,7 +51,7 @@ function showAuthError(message) { $('#auth-error').textContent = message; $('#au
 
 async function submitForgot(event) {
   event.preventDefault();
-  try { const result = await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); if (result.resetToken) $('#reset-form [name=token]').value = result.resetToken; $('#forgot-form').classList.add('hidden'); $('#reset-form').classList.remove('hidden'); toast('สร้างรหัสรีเซ็ตแล้ว'); }
+  try { await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); toast('หากพบบัญชี ระบบจะส่งคำแนะนำการรีเซ็ตรหัสผ่านผ่านช่องทางที่ลงทะเบียนไว้'); setAuthMode('login'); }
   catch (error) { toast(error.message, true); }
 }
 
@@ -87,7 +87,7 @@ async function showView(name) {
   catch (error) { toast(error.message, true); }
 }
 
-async function logout() { try { await api('/auth/logout', { method: 'POST' }); } catch (_) {} state.token = null; state.user = null; localStorage.removeItem('farmweather_token'); location.reload(); }
+async function logout() { try { await api('/auth/logout', { method: 'POST' }); } catch (_) {} state.token = null; state.user = null; location.reload(); }
 
 async function loadProfile() {
   const profile = await api('/profile'); state.user = { ...state.user, ...profile };
@@ -157,4 +157,3 @@ $('#auth-form').addEventListener('submit',submitAuth); $('#forgot-form').addEven
 $$('[data-logout]').forEach((b)=>b.addEventListener('click',logout)); $('#profile-form').addEventListener('submit',saveProfile); $('#add-plot').addEventListener('click',()=>openPlotModal()); $('#empty-add-plot').addEventListener('click',()=>openPlotModal()); $('#edit-plot').addEventListener('click',()=>openPlotModal(selectedPlot())); $('#toggle-plot').addEventListener('click',togglePlot); $('#delete-plot').addEventListener('click',deletePlot); $('#close-plot-modal').addEventListener('click',()=>$('#plot-modal').close()); $('#cancel-plot').addEventListener('click',()=>$('#plot-modal').close()); $('#plot-form').addEventListener('submit',savePlot); $('#locate-button').addEventListener('click',()=>navigator.geolocation?.getCurrentPosition((p)=>setPosition(p.coords.latitude,p.coords.longitude,true),()=>toast('ไม่สามารถอ่านตำแหน่งได้',true))); $('#refresh-weather').addEventListener('click',refreshWeather); $('#run-analysis').addEventListener('click',runAnalysis);
 
 setAuthMode('login');
-if(state.token) api('/auth/me').then(enterApp).catch(()=>{localStorage.removeItem('farmweather_token');state.token=null;});

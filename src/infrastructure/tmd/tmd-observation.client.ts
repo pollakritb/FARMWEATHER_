@@ -51,7 +51,8 @@ export class TmdObservationClient {
         Weather3Hours?: { Stations?: { Station?: TmdStation | TmdStation[] } };
       };
       const raw = parsed.Weather3Hours?.Stations?.Station;
-      const stations = (Array.isArray(raw) ? raw : raw ? [raw] : [])
+      const stationList = this.stationList(raw);
+      const stations = stationList
         .map((station) => this.toCandidate(station, plot))
         .filter((item): item is CurrentWeatherObservation => item !== undefined)
         .filter((item) => this.isRecent(item.observedAt))
@@ -63,6 +64,12 @@ export class TmdObservationClient {
       if (error instanceof ServiceUnavailableException) throw error;
       throw new ServiceUnavailableException('Unable to retrieve current observations from TMD');
     }
+  }
+
+  private stationList(raw?: TmdStation | TmdStation[]): TmdStation[] {
+    if (Array.isArray(raw)) return raw;
+    if (raw) return [raw];
+    return [];
   }
 
   private toCandidate(
@@ -108,7 +115,8 @@ export class TmdObservationClient {
 
   private kmhToMs(value?: string | number): number | undefined {
     const kmh = this.number(value);
-    return kmh === undefined ? undefined : Math.round((kmh / 3.6) * 10) / 10;
+    if (kmh === undefined) return undefined;
+    return Math.round((kmh / 3.6) * 10) / 10;
   }
 
   private decodeXmlText(value: string): string {

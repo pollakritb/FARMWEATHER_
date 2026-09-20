@@ -43,5 +43,5 @@ export class NotificationsService {
     return notification;
   }
 
-  private toDomain = (r: NotificationRow): Notification => ({ id:r.id, plotId:r.plot_id, analysisId:r.analysis_id, severity:r.severity, title:r.title, message:r.message, status:r.status, createdAt:new Date(r.created_at).toISOString(), readAt:r.read_at ? new Date(r.read_at).toISOString() : undefined });
+  private readonly toDomain = (r: NotificationRow): Notification => ({ id:r.id, plotId:r.plot_id, analysisId:r.analysis_id, severity:r.severity, title:r.title, message:r.message, status:r.status, createdAt:new Date(r.created_at).toISOString(), readAt:r.read_at ? new Date(r.read_at).toISOString() : undefined });
 }

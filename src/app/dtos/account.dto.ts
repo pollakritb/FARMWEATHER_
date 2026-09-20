@@ -9,6 +9,6 @@ export class UpdateProfileDto {
 export class ForgotPasswordDto { @IsString() username: string; }
 export class ResetPasswordDto {
   @IsString() token: string;
-  @IsString() @Length(6, 100) newPassword: string;
+  @IsString() @Length(12, 100) newPassword: string;
 }
 export class SetRoleDto { @IsIn(['FARMER', 'ADMIN']) role: UserRole; }

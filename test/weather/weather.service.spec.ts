@@ -64,4 +64,24 @@ describe('WeatherService', () => {
     await expect(service.getForPlot(plot.id, true, 'user-1')).rejects.toBeInstanceOf(ServiceUnavailableException);
     expect(tmd.getHourly).toHaveBeenCalledWith(plot);
   });
+
+  it('uses the same demo conditions for afternoon, night, and dry hours', () => {
+    const { service } = createService();
+    const conditions = service as unknown as {
+      demoConditions(index: number, hour: number): Record<string, number>;
+    };
+
+    expect(conditions.demoConditions(4, 14)).toEqual({
+      rainMm: 12, temperatureC: 34, relativeHumidityPct: 86, windSpeedMs: 4.2, conditionCode: 7,
+    });
+    expect(conditions.demoConditions(5, 14)).toEqual({
+      rainMm: 3, temperatureC: 34, relativeHumidityPct: 86, windSpeedMs: 4.2, conditionCode: 5,
+    });
+    expect(conditions.demoConditions(1, 22)).toEqual({
+      rainMm: 1, temperatureC: 25, relativeHumidityPct: 86, windSpeedMs: 2.1, conditionCode: 5,
+    });
+    expect(conditions.demoConditions(1, 9)).toEqual({
+      rainMm: 0, temperatureC: 29, relativeHumidityPct: 68, windSpeedMs: 2.1, conditionCode: 1,
+    });
+  });
 });

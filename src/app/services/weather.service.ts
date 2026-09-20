@@ -95,24 +95,47 @@ export class WeatherService {
 
     return Array.from({ length: 25 }, (_, index) => {
       const forecastAt = new Date(start.getTime() + index * 60 * 60_000);
-      const hour = forecastAt.getHours();
-      const afternoon = hour >= 13 && hour <= 17;
-      const night = hour <= 5 || hour >= 20;
-      const rainMm = afternoon ? (index % 4 === 0 ? 12 : 3) : night ? 1 : 0;
+      const conditions = this.demoConditions(index, forecastAt.getHours());
 
       return {
         plotId,
         forecastAt: forecastAt.toISOString(),
         fetchedAt,
-        temperatureC: afternoon ? 34 : night ? 25 : 29,
-        relativeHumidityPct: rainMm ? 86 : night ? 78 : 68,
-        rainMm,
-        windSpeedMs: afternoon ? 4.2 : 2.1,
+        ...conditions,
         windDirectionDeg: 225,
-        conditionCode: rainMm >= 10 ? 7 : rainMm > 0 ? 5 : afternoon ? 2 : 1,
         source: 'TMD',
       };
     });
+  }
+
+  private demoConditions(index: number, hour: number): Pick<HourlyForecast,
+    'temperatureC' | 'relativeHumidityPct' | 'rainMm' | 'windSpeedMs' | 'conditionCode'
+  > {
+    const afternoon = hour >= 13 && hour <= 17;
+    const night = hour <= 5 || hour >= 20;
+    let rainMm = 0;
+    let temperatureC = 29;
+    let relativeHumidityPct = 68;
+    let windSpeedMs = 2.1;
+    let conditionCode = 1;
+
+    if (afternoon) {
+      rainMm = index % 4 === 0 ? 12 : 3;
+      temperatureC = 34;
+      windSpeedMs = 4.2;
+      conditionCode = 2;
+    } else if (night) {
+      rainMm = 1;
+      temperatureC = 25;
+      relativeHumidityPct = 78;
+    }
+
+    if (rainMm > 0) {
+      relativeHumidityPct = 86;
+      conditionCode = rainMm >= 10 ? 7 : 5;
+    }
+
+    return { temperatureC, relativeHumidityPct, rainMm, windSpeedMs, conditionCode };
   }
 
   private demoObservation(plotId: string, province?: string): CurrentWeatherObservation {

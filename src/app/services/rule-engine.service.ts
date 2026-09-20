@@ -35,7 +35,7 @@ export class RuleEngineService {
       recommendations.push('งดฉีดพ่นและตรวจค้ำยันเพื่อป้องกันพืชล้ม');
     }
 
-    const riskLevel: RiskLevel = rules.length >= 2 || rules.includes('HEAVY_RAIN') ? 'HIGH' : rules.length ? 'MEDIUM' : 'LOW';
+    const riskLevel = this.riskLevel(rules);
     return {
       id: randomUUID(),
       plotId: plot.id,
@@ -46,6 +46,12 @@ export class RuleEngineService {
       growthStage,
       createdAt: new Date().toISOString(),
     };
+  }
+
+  private riskLevel(rules: string[]): RiskLevel {
+    if (rules.length >= 2 || rules.includes('HEAVY_RAIN')) return 'HIGH';
+    if (rules.length > 0) return 'MEDIUM';
+    return 'LOW';
   }
 
   private growthStage(plot: Plot, at: string): GrowthStage {
