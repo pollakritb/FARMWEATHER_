@@ -1,0 +1,82 @@
+/* Keep grid and flex children shrinkable; scroll long content inside its card. */
+* { box-sizing: border-box; }
+html { color-scheme: light; scroll-padding-top: 5rem; }
+body { margin: 0; line-height: 1.65; background: #f4f7f5; }
+main, section, aside, header, nav, form, .card, #farmer-content > div { min-width: 0; }
+button, input, select { font: inherit; }
+button { touch-action: manipulation; }
+button:focus-visible, a:focus-visible { outline: 3px solid #16a34a; outline-offset: 3px; }
+button { min-height: 44px; }
+.hidden { display: none !important; }
+.card { padding: clamp(1rem, 2vw, 1.5rem); box-shadow: 0 4px 20px #173c2410; }
+.field { min-height: 46px; min-width: 0; font-size: 16px; }
+.field:disabled { background: #f1f5f3; color: #64748b; cursor: not-allowed; }
+.primary-btn { background: #167344; box-shadow: 0 3px 8px #14532d18; }
+.primary-btn:hover { background: #125c37; }
+.primary-btn, .secondary-btn, .danger-btn { gap: .4rem; }
+.badge { flex-shrink: 0; align-items: center; height: fit-content; }
+#auth-screen { min-height: 100svh; }
+#auth-screen > section:first-child { background: radial-gradient(ellipse at 0 0, #25835c, transparent 70%), #103d2b; }
+#auth-screen h1 { text-wrap: balance; }
+#auth-screen > section:first-child h1 { font-size: clamp(2rem, 3.5vw, 3.5rem); line-height: 1.5; }
+#auth-card { box-shadow: 0 16px 60px #163b2510; }
+#app-shell > aside { width: 232px; overflow-y: auto; }
+#app-shell > header { height: auto; min-height: 72px; gap: 1rem; padding-block: .65rem; }
+#app-shell > main { min-width: 0; }
+#farmer-content { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+#farmer-content > aside { border-top: 3px solid #167344; }
+#farmer-content > div > .card:first-child { border-left: 4px solid #167344; }
+#selected-name, #selected-meta, #observation-meta, #sidebar-user { overflow-wrap: anywhere; }
+#farmer-content .card > .flex:not(#forecast-list) { flex-wrap: wrap; gap: .75rem; }
+#farmer-content .card > .flex > div { min-width: 0; }
+.metric-card { min-width: 0; border: 0; box-shadow: 0 2px 10px #173c240a; border-top: 3px solid #d5e9dc; }
+.metric-card strong { font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1.3; }
+.metric-card small { margin-left: .25rem; }
+#forecast-list { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: #9eb7a7 #f0f5f1; }
+.forecast-item { flex: 0 0 108px; scroll-snap-align: start; border: 1px solid #e5ede8; background: #f7faf8; }
+.forecast-item:first-child { background: #eaf6ee; border-color: #b7d9c3; }
+#forecast-updated { overflow-wrap: anywhere; }
+#plot-list { max-height: 320px; overflow-y: auto; scrollbar-width: thin; }
+.plot-item { min-width: 0; transition: background .15s, border-color .15s; }
+.plot-item p { overflow-wrap: anywhere; }
+.plot-item.active { box-shadow: inset 3px 0 #167344; }
+.plot-item strong { min-width: 0; }
+.notification-item > div { flex-wrap: wrap; }
+.notification-item p { overflow-wrap: anywhere; line-height: 1.8; }
+#admin-view table { min-width: 540px; }
+#admin-view td { overflow-wrap: anywhere; max-width: 240px; }
+#toast { max-width: min(380px, calc(100vw - 2rem)); top: 1rem; right: 1rem; overflow-wrap: anywhere; }
+#mobile-nav { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); box-shadow: 0 -4px 24px #173c240a; }
+.mobile-nav-btn { flex: 1; min-width: 0; }
+#plot-modal { width: min(680px, calc(100% - 2rem)); max-width: calc(100% - 2rem); max-height: calc(100dvh - 2rem); margin: auto; border: 0; overflow-y: auto; overscroll-behavior: contain; }
+#plot-modal::backdrop { background: #10281eb3; }
+#plot-form > div:first-child, #plot-form > div:last-child { position: sticky; z-index: 1100; background: white; }
+#plot-form > div:first-child { top: 0; }
+#plot-form > div:last-child { bottom: 0; border-top: 1px solid #e2e8f0; }
+#plot-map { height: clamp(180px, 30dvh, 280px); width: 100%; }
+#plot-form .flex { flex-wrap: wrap; gap: .5rem; }
+body:has(dialog[open]) { overflow: hidden; }
+@media (min-width: 1024px) {
+  #app-shell > main, #app-shell > header { margin-left: 232px; }
+  #app-shell > main > section { padding: 1.5rem; }
+}
+@media (min-width: 1280px) {
+  #farmer-content { grid-template-columns: 240px minmax(0, 1fr); }
+  #plot-list { max-height: calc(100dvh - 330px); }
+}
+@media (max-width: 639px) {
+  #auth-screen > section:last-child { padding: 1rem; }
+  #auth-card { padding: 1.25rem; }
+  #app-shell > main { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+  #farmer-empty { padding: 2rem 1rem; }
+  #farmer-content { margin-top: 1.25rem; }
+  #plot-list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 75%); overflow-x: auto; gap: .5rem; max-height: none; padding-bottom: .4rem; }
+  #plot-list > * { margin-top: 0; }
+  #farmer-content > div { display: grid; gap: 1.25rem; }
+  #farmer-content > div > * { margin-top: 0; }
+  #plot-modal { width: calc(100% - 1rem); max-width: calc(100% - 1rem); max-height: calc(100dvh - 1rem); }
+  #plot-form > div { padding: 1rem; }
+  h1 { font-size: 1.5rem !important; }
+  #selected-name { font-size: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }

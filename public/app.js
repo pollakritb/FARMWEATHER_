@@ -17,7 +17,7 @@ function toast(message, error = false) {
   clearTimeout(toast.timer); toast.timer = setTimeout(() => node.classList.add('hidden'), 4000);
 }
 
-function busy(button, active, label) { button.disabled = active; if (label) button.textContent = label; }
+function busy(button, active, label) { button.disabled = active; button.setAttribute('aria-busy', String(active)); if (label) button.textContent = label; }
 function esc(value) { const div = document.createElement('div'); div.textContent = value ?? ''; return div.innerHTML; }
 function number(value) { return Number.isFinite(value) ? Math.round(value * 10) / 10 : '—'; }
 function date(value) { return value ? new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—'; }
@@ -33,6 +33,8 @@ function setAuthMode(mode) {
   $('#auth-eyebrow').textContent = register ? 'เริ่มต้นใช้งาน' : 'ยินดีต้อนรับกลับ';
   $('#auth-description').textContent = register ? 'สร้างบัญชีเพื่อจัดการแปลงของคุณ' : 'เข้าสู่ระบบเพื่อดูแปลงและคำแนะนำของคุณ';
   $('#confirm-field').classList.toggle('hidden', !register); $('#confirm-field input').required = register;
+  $('#auth-form [name=password]').autocomplete = register ? 'new-password' : 'current-password';
+  $$('.auth-tab').forEach((tab) => tab.setAttribute('aria-pressed', String(tab.dataset.authMode === mode)));
   $('#auth-submit').textContent = register ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'; $('#forgot-link').classList.toggle('hidden', register);
   $$('.auth-tab').forEach((tab) => tab.className = `auth-tab rounded-lg px-3 py-2 text-sm font-semibold ${tab.dataset.authMode === mode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`);
   $('#auth-error').classList.add('hidden');
@@ -81,6 +83,10 @@ function buildNavigation() {
 async function showView(name) {
   $$('[data-view]').forEach((view) => view.classList.toggle('hidden', view.id !== `${name}-view`));
   $$('[data-view-target]').forEach((button) => button.classList.toggle('active', button.dataset.viewTarget === name));
+  $$('[data-view-target]').forEach((button) => {
+    if (button.dataset.viewTarget === name) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  });
   const titles = { farmer: ['แปลงของฉัน', 'อากาศและคำแนะนำตามพิกัด'], admin: ['จัดการผู้ใช้', 'สิทธิ์และบัญชีในระบบ'], profile: ['ข้อมูลส่วนตัว', 'ข้อมูลบัญชีของคุณ'] };
   $('#page-title').textContent = titles[name][0]; $('#page-subtitle').textContent = titles[name][1];
   try { if (name === 'farmer') await loadPlots(); if (name === 'admin') await loadUsers(); if (name === 'profile') await loadProfile(); }
@@ -156,4 +162,17 @@ $$('[data-auth-mode]').forEach((b)=>b.addEventListener('click',()=>setAuthMode(b
 $('#auth-form').addEventListener('submit',submitAuth); $('#forgot-form').addEventListener('submit',submitForgot); $('#reset-form').addEventListener('submit',submitReset); $('#forgot-link').addEventListener('click',()=>{$('#auth-form').classList.add('hidden');$('#auth-tabs').classList.add('hidden');$('#forgot-form').classList.remove('hidden');$('#auth-title').textContent='ลืมรหัสผ่าน';$('#auth-description').textContent='กรอกชื่อผู้ใช้เพื่อสร้างรหัสรีเซ็ต'});
 $$('[data-logout]').forEach((b)=>b.addEventListener('click',logout)); $('#profile-form').addEventListener('submit',saveProfile); $('#add-plot').addEventListener('click',()=>openPlotModal()); $('#empty-add-plot').addEventListener('click',()=>openPlotModal()); $('#edit-plot').addEventListener('click',()=>openPlotModal(selectedPlot())); $('#toggle-plot').addEventListener('click',togglePlot); $('#delete-plot').addEventListener('click',deletePlot); $('#close-plot-modal').addEventListener('click',()=>$('#plot-modal').close()); $('#cancel-plot').addEventListener('click',()=>$('#plot-modal').close()); $('#plot-form').addEventListener('submit',savePlot); $('#locate-button').addEventListener('click',()=>navigator.geolocation?.getCurrentPosition((p)=>setPosition(p.coords.latitude,p.coords.longitude,true),()=>toast('ไม่สามารถอ่านตำแหน่งได้',true))); $('#refresh-weather').addEventListener('click',refreshWeather); $('#run-analysis').addEventListener('click',runAnalysis);
 
+$('#show-password').addEventListener('click', () => {
+  const visible = $('#auth-form [name=password]').type === 'password';
+  ['password', 'confirmPassword'].forEach((name) => { $(`#auth-form [name=${name}]`).type = visible ? 'text' : 'password'; });
+  $('#show-password').textContent = visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน';
+  $('#show-password').setAttribute('aria-pressed', String(visible));
+});
+$('#toast').setAttribute('role', 'status');
+$('#toast').setAttribute('aria-live', 'polite');
+$('#plot-modal').setAttribute('aria-labelledby', 'plot-modal-title');
+$('#close-plot-modal').setAttribute('aria-label', 'ปิดหน้าต่างเพิ่มหรือแก้ไขแปลง');
+$('#forecast-list').tabIndex = 0;
+$('#forecast-list').setAttribute('role', 'region');
+$('#forecast-list').setAttribute('aria-label', 'พยากรณ์รายชั่วโมง เลื่อนเพื่อดูชั่วโมงถัดไป');
 setAuthMode('login');

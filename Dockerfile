@@ -6,6 +6,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY nest-cli.json tsconfig.json tsconfig.build.json ./
+COPY tailwind.config.js ./
+COPY styles ./styles
+COPY public ./public
 COPY src ./src
 RUN npm run build
 
@@ -18,7 +21,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=build /app/dist ./dist
-COPY public ./public
+COPY --from=build /app/public ./public
 COPY openapi.json ./openapi.json
 
 USER node

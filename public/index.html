@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="FarmWeather — weather and crop-risk assistant for Thai farmers" />
   <title>FarmWeather</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d'}},fontFamily:{sans:['Inter','Noto Sans Thai','sans-serif']}}}}</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/utilities.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/responsive.css" />
 </head>
 <body class="min-h-screen bg-slate-50 font-sans text-slate-900">
   <div id="toast" class="pointer-events-none fixed right-4 top-4 z-[100] hidden max-w-sm rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl"></div>
@@ -35,9 +32,11 @@
           </div>
           <form id="auth-form" class="mt-6 space-y-4">
             <label class="block text-sm font-medium">ชื่อผู้ใช้<input name="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+" autocomplete="username" class="field mt-2" placeholder="เช่น farmer01" /></label>
-            <label class="block text-sm font-medium">รหัสผ่าน<input name="password" required minlength="6" type="password" class="field mt-2" placeholder="อย่างน้อย 6 ตัวอักษร" /></label>
-            <label id="confirm-field" class="hidden text-sm font-medium">ยืนยันรหัสผ่าน<input name="confirmPassword" minlength="6" type="password" class="field mt-2" /></label>
-            <p id="auth-error" class="hidden rounded-lg bg-red-50 p-3 text-sm text-red-700"></p>
+            <label class="block text-sm font-medium">รหัสผ่าน<input name="password" required minlength="12" type="password" autocomplete="current-password" aria-describedby="password-help" class="field mt-2" placeholder="กรอกรหัสผ่าน" /></label>
+            <p id="password-help" class="text-xs text-slate-500">อย่างน้อย 12 ตัวอักษร มีตัวพิมพ์เล็ก ตัวพิมพ์ใหญ่ และตัวเลข</p>
+            <button id="show-password" class="text-sm text-brand-700" type="button" aria-pressed="false">แสดงรหัสผ่าน</button>
+            <label id="confirm-field" class="hidden text-sm font-medium">ยืนยันรหัสผ่าน<input name="confirmPassword" minlength="12" type="password" autocomplete="new-password" class="field mt-2" /></label>
+            <p id="auth-error" role="alert" class="hidden rounded-lg bg-red-50 p-3 text-sm text-red-700"></p>
             <button id="auth-submit" class="primary-btn w-full" type="submit">เข้าสู่ระบบ</button>
             <button id="forgot-link" class="w-full text-sm font-medium text-brand-700 hover:underline" type="button">ลืมรหัสผ่าน?</button>
           </form>
