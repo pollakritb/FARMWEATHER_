@@ -10,11 +10,14 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.disable('x-powered-by');
-  app.use(helmet({ contentSecurityPolicy: { directives: {
-    defaultSrc: ["'self'"], scriptSrc: ["'self'", 'https://unpkg.com'],
-    styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
-    connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"],
-  } }}));
+  app.use(helmet({
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    contentSecurityPolicy: { directives: {
+      defaultSrc: ["'self'"], scriptSrc: ["'self'", 'https://unpkg.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], imgSrc: ["'self'", 'data:', 'https://tile.openstreetmap.org'],
+      connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"],
+    } },
+  }));
   app.useStaticAssets(join(process.cwd(), 'public'));
   app.setGlobalPrefix('api');
   const origins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(',').map((origin) => origin.trim());
