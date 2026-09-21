@@ -14,7 +14,7 @@ async function bootstrap() {
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     contentSecurityPolicy: { directives: {
       defaultSrc: ["'self'"], scriptSrc: ["'self'", 'https://unpkg.com'],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], imgSrc: ["'self'", 'data:', 'https://tile.openstreetmap.org'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'], imgSrc: ["'self'", 'data:', 'https://tile.openstreetmap.org', 'https://unpkg.com'],
       connectSrc: ["'self'"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"],
     } },
   }));
