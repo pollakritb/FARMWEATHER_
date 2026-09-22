@@ -191,13 +191,13 @@ try {
     body: { username },
     expected: [201],
   });
-  if (!forgot.payload?.resetToken) throw new Error('Forgot-password response did not include resetToken for the test user');
+  const resetToken = forgot.payload?.resetToken;
   await request('POST', '/api/auth/reset-password', {
-    body: { token: forgot.payload.resetToken, newPassword },
-    expected: [201],
+    body: { token: resetToken ?? randomUUID(), newPassword },
+    expected: resetToken ? [201] : [400],
   });
   const relogin = await request('POST', '/api/auth/login', {
-    body: { username, password: newPassword },
+    body: { username, password: resetToken ? newPassword : password },
   });
   token = relogin.payload?.token;
   await request('POST', '/api/auth/logout', { token, expected: [204] });

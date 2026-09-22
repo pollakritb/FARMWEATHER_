@@ -41,11 +41,15 @@ describe('AuthService database response normalization', () => {
 });
 
 describe('AuthService in-memory workflows', () => {
-  function createService() {
+  function createService(exposeResetToken = false) {
     const database = { enabled: false, query: jest.fn() } as unknown as DatabaseService;
     const config = {
       get: jest.fn((key: string, fallback?: unknown) => (
-        key === 'AUTH_SECRET' ? 'test-secret-with-at-least-32-characters' : fallback
+        key === 'AUTH_SECRET'
+          ? 'test-secret-with-at-least-32-characters'
+          : key === 'PASSWORD_RESET_EXPOSE_TOKEN'
+            ? String(exposeResetToken)
+            : fallback
       )),
     } as unknown as ConfigService;
     return new AuthService(database, config);
@@ -67,14 +71,31 @@ describe('AuthService in-memory workflows', () => {
   });
 
   it('updates a profile and resets its password only once', async () => {
-    const service = createService();
+    const service = createService(true);
     const registered = await service.register({ username: 'farmer', password: 'secret123' });
     const profile = await service.updateProfile(registered.user.id, {
       displayName: 'Farmer One', phone: '0812345678', province: 'นครปฐม',
     });
     expect(profile).toMatchObject({ displayName: 'Farmer One', phone: '0812345678', province: 'นครปฐม' });
 
-    await expect(service.requestPasswordReset('FARMER')).resolves.toEqual({
+    const reset = await service.requestPasswordReset('FARMER');
+    expect(reset).toMatchObject({
+      message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว',
+      expiresInSeconds: 900,
+    });
+    expect('resetToken' in reset && reset.resetToken).toHaveLength(43);
+    if (!('resetToken' in reset)) throw new Error('Expected a development reset token');
+
+    await service.resetPassword(reset.resetToken, 'NewPassword123');
+    await expect(service.verifyToken(registered.token)).rejects.toThrow('กรุณาเข้าสู่ระบบใหม่');
+    await expect(service.login({ username: 'farmer', password: 'NewPassword123' })).resolves.toHaveProperty('token');
+    await expect(service.resetPassword(reset.resetToken, 'AnotherPassword123')).rejects.toThrow('token รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุ');
+  });
+
+  it('does not expose reset tokens unless explicitly enabled', async () => {
+    const service = createService();
+    await service.register({ username: 'private_user', password: 'secret123' });
+    await expect(service.requestPasswordReset('private_user')).resolves.toEqual({
       message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว',
     });
   });

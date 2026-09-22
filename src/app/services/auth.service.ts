@@ -21,7 +21,7 @@ export class AuthService {
   private readonly resetTokens = new Map<string, ResetToken>();
   private readonly secret: string;
 
-  constructor(private readonly database: DatabaseService, config: ConfigService) {
+  constructor(private readonly database: DatabaseService, private readonly config: ConfigService) {
     this.secret = config.get<string>('AUTH_SECRET') ?? '';
     if (this.secret.length < 32) throw new Error('AUTH_SECRET must contain at least 32 characters');
   }
@@ -92,8 +92,11 @@ export class AuthService {
       'INSERT INTO password_reset_tokens (token_hash,user_id,expires_at) VALUES ($1,$2,$3)',
       [hash, user.id, new Date(expiresAt)],
     ); else this.resetTokens.set(hash, { userId: user.id, expiresAt, used: false });
-    // MVP has no email/SMS provider; the client can display this one-time token.
-    return { message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว' };
+    const response = { message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว' };
+    if (this.config.get<string>('PASSWORD_RESET_EXPOSE_TOKEN')?.toLowerCase() === 'true') {
+      return { ...response, resetToken: token, expiresInSeconds: 900 };
+    }
+    return response;
   }
 
   async resetPassword(token: string, newPassword: string) {

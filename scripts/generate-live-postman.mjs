@@ -61,18 +61,18 @@ for (const [method, path] of [
 add('GET', '/api/plots/{plotId}/notifications', { save: "if (pm.response.code === 200) { const n = pm.response.json()[0]; pm.collectionVariables.set('notificationId', n ? n.id : '00000000-0000-4000-8000-000000000000'); pm.collectionVariables.set('notificationExpected', n ? '200' : '404'); }" });
 add('PATCH', '/api/notifications/{id}/read', { expected: "Number(pm.collectionVariables.get('notificationExpected'))" });
 add('DELETE', '/api/plots/{id}');
-add('POST', '/api/auth/forgot-password', { body: { username: '{{username}}' }, save: "if (pm.response.code === 201) { const b = pm.response.json(); pm.test('Reset token available for test account', () => pm.expect(b.resetToken).to.be.a('string')); if (b.resetToken) pm.collectionVariables.set('resetToken', b.resetToken); }" });
-add('POST', '/api/auth/reset-password', { body: { token: '{{resetToken}}', newPassword: '{{newPassword}}' } });
-add('POST', '/api/auth/login', { body: { username: '{{username}}', password: '{{newPassword}}' }, save: saveAuth });
+add('POST', '/api/auth/forgot-password', { body: { username: '{{username}}' }, save: "if (pm.response.code === 201) { const b = pm.response.json(); const exposed = typeof b.resetToken === 'string'; pm.collectionVariables.set('resetToken', exposed ? b.resetToken : pm.variables.replaceIn('{{$guid}}')); pm.collectionVariables.set('resetExpected', exposed ? '201' : '400'); pm.collectionVariables.set('loginPassword', exposed ? pm.collectionVariables.get('newPassword') : pm.collectionVariables.get('password')); }" });
+add('POST', '/api/auth/reset-password', { body: { token: '{{resetToken}}', newPassword: '{{newPassword}}' }, expected: "Number(pm.collectionVariables.get('resetExpected'))" });
+add('POST', '/api/auth/login', { body: { username: '{{username}}', password: '{{loginPassword}}' }, save: saveAuth });
 add('POST', '/api/auth/logout');
 const total = Object.values(spec.paths).reduce((n, p) => n + Object.keys(p).filter(m => ['get', 'post', 'put', 'patch', 'delete'].includes(m)).length, 0);
 if (covered.size !== total) throw new Error('Incomplete operation coverage');
 const collection = {
-  info: { name: 'FarmWeather Vercel - OpenAPI Live Tests', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json', description: `${total} OpenAPI operations. Run in order with one iteration. Creates a unique test account (retained) and deletes its test plot. Admin requests test FARMER denial. Notification read tests 404 when no notification exists. Weather requests require working upstream TMD. No real credentials are included.` },
+  info: { name: 'FarmWeather Vercel - OpenAPI Live Tests', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json', description: `${total} OpenAPI operations. Run in order with one iteration. Creates a unique test account (retained) and deletes its test plot. Admin requests test FARMER denial. Password reset accepts either the development-token success path or the secure Production invalid-token path. Weather requests require working upstream TMD. No real credentials are included.` },
   auth: { type: 'bearer', bearer: [{ key: 'token', value: '{{token}}', type: 'string' }] },
   variable: [{ key: 'baseUrl', value: 'https://farmweather.vercel.app' }],
   event: [{ listen: 'prerequest', script: { type: 'text/javascript', exec: [
-    "if (pm.info.requestName.startsWith('01 ')) { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); for (const k of ['token', 'userId', 'plotId', 'notificationId', 'notificationExpected', 'resetToken']) pm.collectionVariables.unset(k); pm.collectionVariables.set('username', 'pm_' + id); pm.collectionVariables.set('password', 'Test_' + id + '!'); pm.collectionVariables.set('newPassword', 'New_' + id + '!'); pm.collectionVariables.set('today', new Date().toISOString().slice(0, 10)); }",
+    "if (pm.info.requestName.startsWith('01 ')) { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); for (const k of ['token', 'userId', 'plotId', 'notificationId', 'notificationExpected', 'resetToken', 'resetExpected', 'loginPassword']) pm.collectionVariables.unset(k); pm.collectionVariables.set('username', 'pm_' + id); pm.collectionVariables.set('password', 'Test_' + id + '!'); pm.collectionVariables.set('newPassword', 'New_' + id + '!'); pm.collectionVariables.set('loginPassword', 'Test_' + id + '!'); pm.collectionVariables.set('today', new Date().toISOString().slice(0, 10)); }",
   ] } }], item: items,
 };
 writeFileSync(new URL('../FarmWeather.vercel.postman_collection.json', import.meta.url), JSON.stringify(collection, null, 2) + '\n');

@@ -139,7 +139,7 @@
         "tags": ["auth"],
         "operationId": "AuthController_forgot",
         "summary": "Create a 15-minute password-reset token",
-        "description": "The MVP returns resetToken when the account exists because no email/SMS provider is configured. Unknown usernames receive the same generic message without a token.",
+        "description": "Creates a reset request without revealing whether the account exists. Deployments should deliver the token out of band. Local or test environments may explicitly expose resetToken for development.",
         "requestBody": {
           "required": true,
           "content": {
@@ -178,11 +178,12 @@
                 "type": "object",
                 "required": ["token", "newPassword"],
                 "properties": {
-                  "token": { "type": "string" },
+                  "token": { "type": "string", "minLength": 32, "maxLength": 128 },
                   "newPassword": {
                     "type": "string",
-                    "minLength": 6,
-                    "maxLength": 100
+                    "minLength": 12,
+                    "maxLength": 100,
+                    "pattern": "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)"
                   }
                 }
               }
@@ -830,7 +831,7 @@
         "type": "object",
         "additionalProperties": false,
         "required": ["username"],
-        "properties": { "username": { "type": "string" } }
+        "properties": { "username": { "type": "string", "minLength": 3, "maxLength": 30, "pattern": "^\\w+$" } }
       },
       "ForgotPasswordResponse": {
         "type": "object",
@@ -839,7 +840,7 @@
           "message": { "type": "string" },
           "resetToken": {
             "type": "string",
-            "description": "Development-only one-time token; omitted when username is unknown."
+            "description": "Development-only one-time token; returned only when PASSWORD_RESET_EXPOSE_TOKEN=true and the account exists."
           },
           "expiresInSeconds": { "type": "integer", "example": 900 }
         }

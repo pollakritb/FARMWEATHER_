@@ -53,7 +53,7 @@ function showAuthError(message) { $('#auth-error').textContent = message; $('#au
 
 async function submitForgot(event) {
   event.preventDefault();
-  try { await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); toast('หากพบบัญชี ระบบจะส่งคำแนะนำการรีเซ็ตรหัสผ่านผ่านช่องทางที่ลงทะเบียนไว้'); setAuthMode('login'); }
+  try { const result = await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))) }); if (result.resetToken) { $('#forgot-form').classList.add('hidden'); $('#reset-form').classList.remove('hidden'); $('#reset-form [name=token]').value = result.resetToken; $('#auth-title').textContent = 'ตั้งรหัสผ่านใหม่'; $('#auth-description').textContent = 'รหัสรีเซ็ตมีอายุ 15 นาที'; } else { toast(result.message); setAuthMode('login'); } }
   catch (error) { toast(error.message, true); }
 }
 
@@ -129,11 +129,11 @@ function renderPlotList() {
   $$('[data-plot]').forEach((button) => button.addEventListener('click', () => selectPlot(button.dataset.plot)));
 }
 
-async function selectPlot(id, load = true) {
+async function selectPlot(id) {
   state.selectedPlotId = id; const plot = selectedPlot(); renderPlotList();
   $('#selected-name').textContent = plot.name; $('#selected-meta').textContent = `${cropName(plot.cropType)} · ${plot.province || 'ไม่ระบุจังหวัด'} · ${plot.latitude.toFixed(4)}, ${plot.longitude.toFixed(4)}`;
   $('#toggle-plot').textContent = plot.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน'; $('#toggle-plot').classList.toggle('!border-green-300', !plot.active);
-  resetWeather(); if (load) await Promise.allSettled([loadCurrent(), loadForecast(), loadAnalysis(), loadNotifications()]); else await Promise.allSettled([loadCurrent(), loadForecast(), loadAnalysis(), loadNotifications()]);
+  resetWeather(); await Promise.allSettled([loadCurrent(), loadForecast(), loadAnalysis(), loadNotifications()]);
 }
 
 function resetWeather() { ['temperature','rain','humidity','wind'].forEach((id) => $(`#${id}`).textContent = '—'); $('#observation-meta').textContent = 'กำลังโหลดข้อมูล…'; $('#forecast-list').innerHTML = '<p class="text-sm text-slate-500">กำลังโหลดพยากรณ์…</p>'; $('#analysis-content').textContent = 'กดวิเคราะห์เพื่อดูคำแนะนำตามชนิดและระยะพืช'; $('#risk-badge').className = 'badge bg-slate-100 text-slate-600'; $('#risk-badge').textContent = 'รอวิเคราะห์'; }
