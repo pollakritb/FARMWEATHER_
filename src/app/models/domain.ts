@@ -42,7 +42,7 @@ export interface CurrentWeatherObservation {
   rainfallMm?: number;
   windSpeedMs?: number;
   windDirectionDeg?: number;
-  source: 'TMD_STATION';
+  source: 'TMD_STATION' | 'TMD_FORECAST_FALLBACK';
 }
 
 export interface AnalysisResult {

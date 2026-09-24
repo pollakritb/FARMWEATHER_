@@ -1015,7 +1015,7 @@
           "rainfallMm": { "type": "number" },
           "windSpeedMs": { "type": "number" },
           "windDirectionDeg": { "type": "number" },
-          "source": { "type": "string", "enum": ["TMD_STATION"] }
+          "source": { "type": "string", "enum": ["TMD_STATION", "TMD_FORECAST_FALLBACK"] }
         }
       },
       "HourlyForecast": {

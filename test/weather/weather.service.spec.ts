@@ -65,6 +65,35 @@ describe('WeatherService', () => {
     expect(tmd.getHourly).toHaveBeenCalledWith(plot);
   });
 
+  it('falls back to the nearest hourly forecast when station observations are unavailable', async () => {
+    const { service, tmd, observations } = createService({ WEATHER_DEMO_MODE: 'false' });
+    const forecastAt = new Date().toISOString();
+    tmd.getHourly.mockResolvedValue([{
+      plotId: plot.id,
+      forecastAt,
+      fetchedAt: forecastAt,
+      temperatureC: 27.5,
+      relativeHumidityPct: 82,
+      rainMm: 1.2,
+      windSpeedMs: 2.4,
+      windDirectionDeg: 180,
+      conditionCode: 5,
+      source: 'TMD',
+    }]);
+
+    const observation = await service.getCurrent(plot.id, true, 'user-1');
+
+    expect(observations.getNearest).toHaveBeenCalledWith(plot);
+    expect(observation).toMatchObject({
+      plotId: plot.id,
+      stationId: 'TMD_FORECAST',
+      stationName: 'แบบจำลองพยากรณ์ TMD (ข้อมูลสำรอง)',
+      temperatureC: 27.5,
+      rainfallMm: 1.2,
+      source: 'TMD_FORECAST_FALLBACK',
+    });
+  });
+
   it('uses the same demo conditions for afternoon, night, and dry hours', () => {
     const { service } = createService();
     const conditions = service as unknown as {

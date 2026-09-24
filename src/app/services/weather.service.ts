@@ -4,7 +4,7 @@ import { Cron } from '@nestjs/schedule';
 import { DatabaseService } from '../../infrastructure/database/database.service';
 import { TmdClient } from '../../infrastructure/tmd/tmd-forecast.client';
 import { TmdObservationClient } from '../../infrastructure/tmd/tmd-observation.client';
-import { CurrentWeatherObservation, HourlyForecast } from '../models/domain';
+import { CurrentWeatherObservation, HourlyForecast, Plot } from '../models/domain';
 import { PlotsService } from './plots.service';
 
 @Injectable()
@@ -41,13 +41,21 @@ export class WeatherService {
     const plot = await this.plots.findOne(plotId, ownerId);
     const cached = this.observationCache.get(plotId);
     if (!force && cached && this.isObservationFresh(cached.fetchedAt)) return cached;
-    if (!force && this.database.enabled) {
-      const stored = await this.loadObservation(plotId);
+    let stored = cached;
+    if (this.database.enabled) {
+      stored ??= await this.loadObservation(plotId);
       if (stored && this.isObservationFresh(stored.fetchedAt)) { this.observationCache.set(plotId, stored); return stored; }
     }
-    const observation = this.demoWeatherEnabled()
-      ? this.demoObservation(plot.id, plot.province)
-      : await this.observations.getNearest(plot);
+    let observation: CurrentWeatherObservation;
+    try {
+      observation = this.demoWeatherEnabled()
+        ? this.demoObservation(plot.id, plot.province)
+        : await this.observations.getNearest(plot);
+    } catch (error) {
+      const fallback = stored ?? await this.forecastFallback(plot, ownerId);
+      if (!fallback) throw error;
+      observation = fallback;
+    }
     this.observationCache.set(plotId, observation);
     await this.saveObservation(observation);
     return observation;
@@ -64,7 +72,7 @@ export class WeatherService {
     await this.plots.findOne(plotId, ownerId);
     if (!this.database.enabled) { const item=this.observationCache.get(plotId); return item ? [item] : []; }
     const rows = await this.database.query<Record<string, unknown>>('SELECT * FROM weather_observations WHERE plot_id=$1 ORDER BY observed_at DESC LIMIT 500',[plotId]);
-    return rows.map((r) => ({ plotId:String(r.plot_id), observedAt:new Date(r.observed_at as string).toISOString(), fetchedAt:new Date(r.fetched_at as string).toISOString(), stationId:String(r.station_id), stationName:String(r.station_name), province:String(r.province), stationDistanceKm:Number(r.station_distance_km), temperatureC:this.num(r.temperature_c), relativeHumidityPct:this.num(r.relative_humidity_pct), rainfallMm:this.num(r.rainfall_mm), windSpeedMs:this.num(r.wind_speed_ms), windDirectionDeg:this.num(r.wind_direction_deg), source:'TMD_STATION' }));
+    return rows.map((r) => ({ plotId:String(r.plot_id), observedAt:new Date(r.observed_at as string).toISOString(), fetchedAt:new Date(r.fetched_at as string).toISOString(), stationId:String(r.station_id), stationName:String(r.station_name), province:String(r.province), stationDistanceKm:Number(r.station_distance_km), temperatureC:this.num(r.temperature_c), relativeHumidityPct:this.num(r.relative_humidity_pct), rainfallMm:this.num(r.rainfall_mm), windSpeedMs:this.num(r.wind_speed_ms), windDirectionDeg:this.num(r.wind_direction_deg), source:this.observationSource(r.source) }));
   }
 
   @Cron(process.env.WEATHER_CRON ?? '0 */3 * * *')
@@ -157,6 +165,36 @@ export class WeatherService {
     };
   }
 
+  private async forecastFallback(plot: Plot, ownerId?: string): Promise<CurrentWeatherObservation | undefined> {
+    try {
+      const forecasts = await this.getForPlot(plot.id, false, ownerId);
+      const now = Date.now();
+      const nearest = forecasts.reduce<HourlyForecast | undefined>((best, item) => (
+        !best || Math.abs(new Date(item.forecastAt).getTime() - now) < Math.abs(new Date(best.forecastAt).getTime() - now)
+          ? item
+          : best
+      ), undefined);
+      if (!nearest) return undefined;
+      return {
+        plotId: plot.id,
+        observedAt: nearest.forecastAt,
+        fetchedAt: nearest.fetchedAt,
+        stationId: 'TMD_FORECAST',
+        stationName: 'แบบจำลองพยากรณ์ TMD (ข้อมูลสำรอง)',
+        province: plot.province ?? 'ไม่ระบุจังหวัด',
+        stationDistanceKm: 0,
+        temperatureC: nearest.temperatureC,
+        relativeHumidityPct: nearest.relativeHumidityPct,
+        rainfallMm: nearest.rainMm,
+        windSpeedMs: nearest.windSpeedMs,
+        windDirectionDeg: nearest.windDirectionDeg,
+        source: 'TMD_FORECAST_FALLBACK',
+      };
+    } catch {
+      return undefined;
+    }
+  }
+
   private async saveForecasts(items: HourlyForecast[]) {
     if (!this.database.enabled) return;
     for (const f of items) await this.database.query(
@@ -183,7 +221,8 @@ export class WeatherService {
   }
   private async loadObservation(plotId: string): Promise<CurrentWeatherObservation | undefined> {
     const r = (await this.database.query<Record<string, unknown>>('SELECT * FROM weather_observations WHERE plot_id=$1 ORDER BY observed_at DESC LIMIT 1',[plotId]))[0];
-    return r ? { plotId:String(r.plot_id), observedAt:new Date(r.observed_at as string).toISOString(), fetchedAt:new Date(r.fetched_at as string).toISOString(), stationId:String(r.station_id), stationName:String(r.station_name), province:String(r.province), stationDistanceKm:Number(r.station_distance_km), temperatureC:this.num(r.temperature_c), relativeHumidityPct:this.num(r.relative_humidity_pct), rainfallMm:this.num(r.rainfall_mm), windSpeedMs:this.num(r.wind_speed_ms), windDirectionDeg:this.num(r.wind_direction_deg), source:'TMD_STATION' } : undefined;
+    return r ? { plotId:String(r.plot_id), observedAt:new Date(r.observed_at as string).toISOString(), fetchedAt:new Date(r.fetched_at as string).toISOString(), stationId:String(r.station_id), stationName:String(r.station_name), province:String(r.province), stationDistanceKm:Number(r.station_distance_km), temperatureC:this.num(r.temperature_c), relativeHumidityPct:this.num(r.relative_humidity_pct), rainfallMm:this.num(r.rainfall_mm), windSpeedMs:this.num(r.wind_speed_ms), windDirectionDeg:this.num(r.wind_direction_deg), source:this.observationSource(r.source) } : undefined;
   }
+  private observationSource(value: unknown): CurrentWeatherObservation['source'] { return value === 'TMD_FORECAST_FALLBACK' ? value : 'TMD_STATION'; }
   private num(value: unknown): number | undefined { return value === null || value === undefined ? undefined : Number(value); }
 }
