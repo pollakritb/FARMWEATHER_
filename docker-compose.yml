@@ -1,5 +1,6 @@
 services:
   app:
+    image: farmweather:${FARMWEATHER_IMAGE_TAG:-local}
     build:
       context: .
       dockerfile: Dockerfile

@@ -7,9 +7,14 @@ NestJS backend สำหรับบัญชีเกษตรกรและ�
 รันทั้ง API และ PostgreSQL ด้วย Docker:
 
 ```bash
+cp .env.example .env
 docker compose up --build -d
 docker compose ps
 ```
+
+Compose จะสร้าง image ชื่อ `farmweather:local` จาก source code ปัจจุบัน หากต้องการ
+แยก image ตามเวอร์ชัน ให้กำหนด `FARMWEATHER_IMAGE_TAG` เป็นชื่อ tag ที่ต้องการ
+ก่อนสั่ง build และเปลี่ยน `AUTH_SECRET` ใน `.env` เป็นค่าสุ่มของตัวเองก่อนใช้งาน
 
 เปิดหน้าเว็บที่ `http://localhost:3000`, Swagger ที่ `http://localhost:3000/docs`
 และ health check ที่ `http://localhost:3000/api/health` ดู log หรือหยุดระบบได้ด้วย:
