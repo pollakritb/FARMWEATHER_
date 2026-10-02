@@ -14,7 +14,9 @@ export class ForgotPasswordDto {
 export class ResetPasswordDto {
   @IsString() @Length(32, 128) token: string;
   @IsString() @Length(12, 100)
-  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { message: 'newPassword must contain uppercase, lowercase, and number characters' })
+  @Matches(/[a-z]/, { message: 'newPassword must contain uppercase, lowercase, and number characters' })
+  @Matches(/[A-Z]/, { message: 'newPassword must contain uppercase, lowercase, and number characters' })
+  @Matches(/\d/, { message: 'newPassword must contain uppercase, lowercase, and number characters' })
   newPassword: string;
 }
 export class SetRoleDto { @IsIn(['FARMER', 'ADMIN']) role: UserRole; }

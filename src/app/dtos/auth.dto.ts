@@ -8,6 +8,8 @@ export class AuthDto {
 
   @IsString()
   @Length(12, 100)
-  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { message: 'password must contain uppercase, lowercase, and number characters' })
+  @Matches(/[a-z]/, { message: 'password must contain uppercase, lowercase, and number characters' })
+  @Matches(/[A-Z]/, { message: 'password must contain uppercase, lowercase, and number characters' })
+  @Matches(/\d/, { message: 'password must contain uppercase, lowercase, and number characters' })
   password: string;
 }
