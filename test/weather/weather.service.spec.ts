@@ -28,8 +28,7 @@ describe('WeatherService', () => {
 
     return {
       service: new WeatherService(plots as never, tmd as never, observations as never, config as never, database as never),
-      tmd,
-      observations,
+      tmd, observations, plots, database,
     };
   }
 
@@ -112,5 +111,104 @@ describe('WeatherService', () => {
     expect(conditions.demoConditions(1, 9)).toEqual({
       rainMm: 0, temperatureC: 29, relativeHumidityPct: 68, windSpeedMs: 2.1, conditionCode: 1,
     });
+  });
+
+  it('reuses fresh forecasts and exposes in-memory history for the owner', async () => {
+    const { service, tmd, plots } = createService();
+    const first = await service.getForPlot(plot.id, true, 'user-1');
+
+    expect(await service.getForPlot(plot.id, false, 'user-1')).toBe(first);
+    expect(await service.forecastHistory(plot.id, 'user-1')).toBe(first);
+    expect(plots.findOne).toHaveBeenCalledWith(plot.id, 'user-1');
+    expect(tmd.getHourly).not.toHaveBeenCalled();
+  });
+
+  it('reuses fresh observations and exposes in-memory observation history', async () => {
+    const { service, observations } = createService();
+    expect(await service.observationHistory(plot.id, 'user-1')).toEqual([]);
+
+    const first = await service.getCurrent(plot.id, true, 'user-1');
+    expect(await service.getCurrent(plot.id, false, 'user-1')).toBe(first);
+    expect(await service.observationHistory(plot.id, 'user-1')).toEqual([first]);
+    expect(observations.getNearest).not.toHaveBeenCalled();
+  });
+
+  it('reads a fresh stored forecast before calling TMD', async () => {
+    const { service, database, tmd } = createService({ WEATHER_DEMO_MODE: 'false' });
+    database.enabled = true;
+    const now = new Date().toISOString();
+    database.query.mockResolvedValue([{ plot_id: plot.id, forecast_at: now, fetched_at: now,
+      temperature_c: '28', relative_humidity_pct: null, rain_mm: '2', wind_speed_ms: null,
+      wind_direction_deg: null, condition_code: '5' }]);
+
+    const result = await service.getForPlot(plot.id, false, 'user-1');
+
+    expect(result).toEqual([expect.objectContaining({
+      plotId: plot.id, temperatureC: 28, rainMm: 2,
+      relativeHumidityPct: undefined, conditionCode: 5,
+    })]);
+    expect(tmd.getHourly).not.toHaveBeenCalled();
+  });
+
+  it('stores refreshed forecasts and observations and reads their histories', async () => {
+    const { service, database, tmd, observations } = createService({ WEATHER_DEMO_MODE: 'false' });
+    database.enabled = true;
+    const now = new Date().toISOString();
+    const forecast = { plotId: plot.id, forecastAt: now, fetchedAt: now, temperatureC: 29,
+      relativeHumidityPct: 80, rainMm: 1, windSpeedMs: 2, windDirectionDeg: 180,
+      conditionCode: 5, source: 'TMD' };
+    const observation = { plotId: plot.id, observedAt: now, fetchedAt: now, stationId: 'S1',
+      stationName: 'Station', province: plot.province, stationDistanceKm: 2,
+      temperatureC: 28, relativeHumidityPct: 81, rainfallMm: 1, windSpeedMs: 2,
+      windDirectionDeg: 180, source: 'TMD_STATION' };
+    tmd.getHourly.mockResolvedValue([forecast]);
+    observations.getNearest.mockResolvedValue(observation);
+    database.query.mockResolvedValue([]);
+
+    expect(await service.getForPlot(plot.id, true, 'user-1')).toEqual([forecast]);
+    expect(await service.getCurrent(plot.id, true, 'user-1')).toEqual(observation);
+    expect(database.query).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO weather_forecasts'), expect.any(Array));
+    expect(database.query).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO weather_forecast_history'), expect.any(Array));
+    expect(database.query).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO weather_observations'), expect.any(Array));
+
+    database.query.mockResolvedValueOnce([{ plot_id: plot.id, forecast_at: now, fetched_at: now,
+      temperature_c: '29', relative_humidity_pct: '80', rain_mm: '1', wind_speed_ms: '2',
+      wind_direction_deg: '180', condition_code: '5' }]);
+    expect(await service.forecastHistory(plot.id, 'user-1')).toEqual([forecast]);
+
+    database.query.mockResolvedValueOnce([{ plot_id: plot.id, observed_at: now, fetched_at: now,
+      station_id: 'S1', station_name: 'Station', province: plot.province, station_distance_km: '2',
+      temperature_c: '28', relative_humidity_pct: '81', rainfall_mm: '1', wind_speed_ms: '2',
+      wind_direction_deg: '180', source: 'TMD_STATION' }]);
+    expect(await service.observationHistory(plot.id, 'user-1')).toEqual([observation]);
+  });
+
+  it('keeps an older observation when the station API fails', async () => {
+    const { service, database, observations } = createService({ WEATHER_DEMO_MODE: 'false' });
+    database.enabled = true;
+    const old = new Date(Date.now() - 20 * 60_000).toISOString();
+    database.query.mockResolvedValue([{ plot_id: plot.id, observed_at: old, fetched_at: old,
+      station_id: 'S1', station_name: 'Station', province: plot.province, station_distance_km: 2,
+      temperature_c: 27, source: 'TMD_STATION' }]);
+
+    const result = await service.getCurrent(plot.id, false, 'user-1');
+
+    expect(result).toMatchObject({ stationId: 'S1', temperatureC: 27 });
+    expect(observations.getNearest).toHaveBeenCalledWith(plot);
+  });
+
+  it('refreshes active plots even when one TMD request fails', async () => {
+    const { service, plots, tmd } = createService({ WEATHER_DEMO_MODE: 'false' });
+    plots.findActive.mockResolvedValue([plot, { ...plot, id: 'plot-2' }]);
+    plots.findOne.mockImplementation(async (id: string) => ({ ...plot, id }));
+    tmd.getHourly.mockImplementation(async (item: Plot) => {
+      if (item.id === plot.id) throw new ServiceUnavailableException();
+      return [];
+    });
+
+    await expect(service.refreshActivePlots()).resolves.toBeUndefined();
+    expect(tmd.getHourly).toHaveBeenCalledTimes(2);
+    expect(plots.findOne).toHaveBeenCalledWith(plot.id, undefined);
+    expect(plots.findOne).toHaveBeenCalledWith('plot-2', undefined);
   });
 });
