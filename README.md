@@ -61,10 +61,11 @@ npm run sonar:up
 และ token จากหน้า SonarQube แล้วสร้าง coverage และสแกนด้วย SonarScanner container:
 
 ```bash
-npm run test:coverage
-SONAR_TOKEN=<token> npm run sonar:scan
+SONAR_TOKEN='your-token' npm run sonar:coverage
 ```
 
+คำสั่งนี้รัน Jest เพื่อสร้าง `coverage/lcov.info` แล้วรัน SonarScanner เพื่อส่งผลเข้า SonarQube
+การรัน `npm run test:coverage` เพียงอย่างเดียวจะไม่อัปเดตหน้า SonarQube
 ไฟล์ `sonar-project.properties` กำหนดให้วิเคราะห์ TypeScript ใน `src`, อ่าน tests จาก
 `test` และนำเข้า coverage จาก `coverage/lcov.info` โดยไม่เก็บ token ลง repository
 หยุด SonarQube ได้ด้วย `npm run sonar:down`

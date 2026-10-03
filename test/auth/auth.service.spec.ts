@@ -112,4 +112,38 @@ describe('AuthService in-memory workflows', () => {
     await expect(service.setRole(adminUser, farmerUser.id, 'ADMIN')).resolves.toMatchObject({ role: 'ADMIN' });
     await expect(service.listUsers(adminUser)).resolves.toHaveLength(1);
   });
+
+  it('rejects malformed, tampered, and expired sessions', async () => {
+    const service = createService();
+    const registered = await service.register({ username: 'farmer', password: 'secret123' });
+    await expect(service.verifyToken('not-a-token')).rejects.toThrow('กรุณาเข้าสู่ระบบใหม่');
+    await expect(service.verifyToken(`${registered.token}x`)).rejects.toThrow('กรุณาเข้าสู่ระบบใหม่');
+
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(Date.now() + 8 * 86_400_000);
+      await expect(service.verifyToken(registered.token)).rejects.toThrow('กรุณาเข้าสู่ระบบใหม่');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('does not reveal unknown accounts in password reset requests', async () => {
+    const service = createService(true);
+    await expect(service.requestPasswordReset('missing')).resolves.toEqual({
+      message: 'หากพบบัญชี ระบบได้สร้างคำขอรีเซ็ตรหัสผ่านแล้ว',
+    });
+    await expect(service.resetPassword('unknown-token', 'NewPassword123'))
+      .rejects.toThrow('token รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุ');
+    await expect(service.login({ username: 'missing', password: 'secret123' }))
+      .rejects.toThrow('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+    await expect(service.updateProfile('missing', { displayName: 'Nobody' }))
+      .rejects.toThrow();
+  });
+
+  it('requires a sufficiently long signing secret', () => {
+    const database = { enabled: false, query: jest.fn() } as unknown as DatabaseService;
+    const config = { get: jest.fn(() => 'short') } as unknown as ConfigService;
+    expect(() => new AuthService(database, config)).toThrow('AUTH_SECRET must contain at least 32 characters');
+  });
 });

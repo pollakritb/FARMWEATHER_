@@ -22,7 +22,8 @@
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "sonar:up": "docker compose --profile sonar up -d sonarqube",
     "sonar:down": "docker compose --profile sonar stop sonarqube",
-    "sonar:scan": "docker run --rm --network host -e SONAR_HOST_URL=http://localhost:9000 -e SONAR_TOKEN -v \"$PWD:/usr/src\" sonarsource/sonar-scanner-cli"
+    "sonar:scan": "docker run --rm --network host -e SONAR_HOST_URL=http://localhost:9000 -e SONAR_TOKEN -v \"$PWD:/usr/src\" sonarsource/sonar-scanner-cli",
+    "sonar:coverage": "npm run test:coverage && npm run sonar:scan"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
