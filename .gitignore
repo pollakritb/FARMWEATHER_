@@ -18,3 +18,6 @@ yarn-error.log*
 
 # Local Git metadata
 .git-push/
+
+# Shareable local classroom Docker exports
+classroom-artifacts/

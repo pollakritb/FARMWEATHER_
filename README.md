@@ -159,3 +159,7 @@ API ส่วนใหญ่ต้องส่ง `Authorization: Bearer <token>
 - TMD adapter เรียก hourly endpoint ตาม latitude/longitude โดยขอ `tc,rh,rain,ws10m,wd10m,cond`
 
 ขั้นถัดไปที่เหมาะสมคือเชื่อม email/SMS สำหรับส่ง password-reset link, notification provider ภายนอก และทบทวน threshold/ช่วงระยะพืชกับผู้เชี่ยวชาญเกษตร
+
+## Docker สำหรับงานกลุ่ม ไม่ต้องขอ API key หรือ token
+
+ดูคำสั่งเปิด API, ทดสอบ k6 และ scan SonarQube อัตโนมัติที่ [CLASSROOM.md](CLASSROOM.md) ชุดนี้ใช้ `compose.classroom.yml` และ image `farmweather:classroom`

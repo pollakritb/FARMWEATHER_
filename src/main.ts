@@ -5,6 +5,8 @@ import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { AuthService } from './app/services/auth.service';
+import { PlotsService } from './app/services/plots.service';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -29,8 +31,14 @@ async function bootstrap() {
   const contract = JSON.parse(
     readFileSync(join(process.cwd(), 'openapi.json'), 'utf8'),
   ) as OpenAPIObject;
-  if (process.env.NODE_ENV !== 'production') SwaggerModule.setup('docs', app, contract);
+  if (process.env.NODE_ENV !== 'production' || process.env.CLASSROOM_MODE === 'true') SwaggerModule.setup('docs', app, contract);
 
+  await app.init();
+  const actor = await app.get(AuthService).initializeClassroom();
+  if (actor) {
+    await app.get(PlotsService).create({ name: 'Classroom rice plot', latitude: 14.02, longitude: 100.52, cropType: 'RICE', plantedAt: new Date().toISOString().slice(0, 10) }, actor.id);
+    console.log('CLASSROOM_MODE: token-free shared admin account, demo weather and no rate limit');
+  }
   await app.listen(process.env.PORT ?? 3000);
 }
 

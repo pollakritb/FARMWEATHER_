@@ -24,7 +24,11 @@
     "sonar:up": "docker compose --profile sonar up -d sonarqube",
     "sonar:down": "docker compose --profile sonar stop sonarqube",
     "sonar:scan": "docker run --rm --network host -e SONAR_HOST_URL=http://localhost:9000 -e SONAR_TOKEN -v \"$PWD:/usr/src\" sonarsource/sonar-scanner-cli",
-    "sonar:coverage": "npm run test:coverage && npm run sonar:scan"
+    "sonar:coverage": "npm run test:coverage && npm run sonar:scan",
+    "classroom:up": "docker compose --env-file /dev/null -f compose.classroom.yml up -d --build app",
+    "classroom:down": "docker compose --env-file /dev/null -f compose.classroom.yml --profile load --profile sonar down",
+    "classroom:k6": "docker compose --env-file /dev/null -f compose.classroom.yml --profile load run --rm k6",
+    "classroom:sonar": "bash scripts/run-classroom-sonar.sh"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

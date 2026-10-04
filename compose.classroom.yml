@@ -1,0 +1,86 @@
+name: farmweather-classroom
+services:
+  app:
+    image: farmweather:classroom
+    build:
+      context: .
+      target: classroom
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      CLASSROOM_MODE: 'true'
+      WEATHER_DEMO_MODE: 'true'
+      DATABASE_URL: ''
+      AUTH_SECRET: classroom-demo-only-secret-at-least-32-characters
+      CORS_ORIGIN: http://localhost:3001
+    ports:
+      - '127.0.0.1:3001:3000'
+  k6:
+    image: grafana/k6:latest
+    profiles: [load]
+    volumes:
+      - ./scripts:/scripts:ro
+    environment:
+      BASE_URL: http://app:3000
+      PROFILE: ${PROFILE:-smoke}
+      VUS: ${VUS:-5}
+      DURATION: ${DURATION:-20s}
+    command: run /scripts/k6-classroom.js
+    depends_on:
+      app:
+        condition: service_healthy
+  sonarqube:
+    image: sonarqube:community
+    profiles: [sonar]
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: 'true'
+    ports:
+      - '127.0.0.1:9001:9000'
+    volumes:
+      - classroom_sonar_data:/opt/sonarqube/data
+      - classroom_sonar_extensions:/opt/sonarqube/extensions
+      - classroom_sonar_logs:/opt/sonarqube/logs
+  sonar-init:
+    image: node:22-alpine
+    profiles: [sonar]
+    working_dir: /workspace
+    volumes:
+      - ./scripts:/workspace/scripts:ro
+      - classroom_sonar_auth:/sonar-auth
+    environment:
+      SONAR_HOST_URL: http://sonarqube:9000
+    command: node scripts/sonar-classroom-init.mjs
+    depends_on:
+      sonarqube:
+        condition: service_started
+  coverage:
+    image: node:22-alpine
+    profiles: [sonar]
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - classroom_node_modules:/workspace/node_modules
+    command: sh -c 'npm ci && npm run test:coverage'
+  sonar-scan:
+    image: sonarsource/sonar-scanner-cli:latest
+    profiles: [sonar]
+    user: '0:0'
+    working_dir: /usr/src
+    volumes:
+      - .:/usr/src:ro
+      - classroom_sonar_auth:/sonar-auth:ro
+    environment:
+      SONAR_HOST_URL: http://sonarqube:9000
+    entrypoint: /bin/sh
+    command: ['-ec', 'export SONAR_TOKEN="$$(cat /sonar-auth/token)"; exec sonar-scanner -Dsonar.working.directory=/tmp/sonar-work']
+    depends_on:
+      sonar-init:
+        condition: service_completed_successfully
+      coverage:
+        condition: service_completed_successfully
+volumes:
+  classroom_sonar_data:
+  classroom_sonar_extensions:
+  classroom_sonar_logs:
+  classroom_sonar_auth:
+  classroom_node_modules:

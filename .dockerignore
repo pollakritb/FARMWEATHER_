@@ -14,3 +14,7 @@ yarn-error.log*
 Dockerfile*
 README.md
 test
+
+classroom-artifacts
+security-reports
+performance-reports

@@ -31,3 +31,12 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"
 
 CMD ["node", "dist/main.js"]
+
+FROM production AS classroom
+ENV CLASSROOM_MODE=true \
+    WEATHER_DEMO_MODE=true \
+    DATABASE_URL="" \
+    AUTH_SECRET=classroom-demo-only-secret-at-least-32-characters \
+    CORS_ORIGIN=http://localhost:3001
+
+FROM production AS default

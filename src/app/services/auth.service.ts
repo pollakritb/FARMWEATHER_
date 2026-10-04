@@ -22,9 +22,25 @@ export class AuthService {
   private readonly secret: string;
 
   constructor(private readonly database: DatabaseService, private readonly config: ConfigService) {
+    if (this.classroomMode && this.database.enabled) throw new Error('CLASSROOM_MODE requires isolated in-memory storage');
     this.secret = config.get<string>('AUTH_SECRET') ?? '';
     if (this.secret.length < 32) throw new Error('AUTH_SECRET must contain at least 32 characters');
   }
+
+  get classroomMode(): boolean { return this.config.get<string>('CLASSROOM_MODE') === 'true'; }
+
+  private classroomActor?: AuthUser;
+
+  async initializeClassroom(): Promise<AuthUser | undefined> {
+    if (!this.classroomMode) return undefined;
+    await this.register({ username: 'classroom', password: 'ClassroomDemo123!' });
+    const user = this.users.get('classroom')!;
+    user.role = 'ADMIN';
+    this.classroomActor = { id: user.id, username: user.username, role: 'ADMIN', sessionId: 'classroom' };
+    return this.classroomActor;
+  }
+
+  getClassroomActor(): AuthUser | undefined { return this.classroomActor; }
 
   async register(dto: AuthDto) {
     const username = dto.username.toLowerCase();

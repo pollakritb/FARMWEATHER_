@@ -11,6 +11,12 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()])) return true;
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    if (this.auth.classroomMode) {
+      const actor = this.auth.getClassroomActor();
+      if (!actor) throw new UnauthorizedException('Classroom account is not ready');
+      request.user = actor;
+      return true;
+    }
     const header = request.headers.authorization;
     if (!header?.startsWith('Bearer ')) throw new UnauthorizedException('กรุณาเข้าสู่ระบบ');
     request.user = await this.auth.verifyToken(header.slice(7));
