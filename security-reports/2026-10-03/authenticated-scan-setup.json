@@ -1,0 +1,10 @@
+{
+  "target": "http://127.0.0.1:3100",
+  "accountRole": "FARMER",
+  "plotId": "b597032f-a42f-4b24-bb62-9806ee323167",
+  "excludedOperations": [
+    "POST /api/auth/logout",
+    "DELETE /api/plots/{id}"
+  ],
+  "reason": "Preserve the bearer session and seeded plot during the active scan"
+}

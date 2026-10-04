@@ -49,6 +49,24 @@ Seeder สร้าง `admin` และ `farmer` โดยอ่าน username
 
 เปิดหน้าเว็บที่ `http://localhost:3000`, Swagger ที่ `http://localhost:3000/docs` และ health check ที่ `GET /api/health`
 
+## ทดสอบโหลดด้วย Grafana k6
+
+เปิด Terminal ใหม่ในโฟลเดอร์โปรเจกต์ แล้วรัน k6 พร้อม API ผ่าน Docker Compose:
+
+```bash
+npm run test:load
+```
+
+คำสั่งนี้เรียก `docker compose --profile load run --rm k6` ซึ่งเริ่ม API และ PostgreSQL หากยังไม่ได้รัน ผลสรุปแสดงใน Terminal ชุด load อ้างอิงจากไฟล์ตัวอย่าง `5_k6/k6_load_stress_test_script.js`: เพิ่มผู้ใช้เป็น 20 คนใน 30 วินาที คงไว้ 1 นาที แล้วลดลงใน 20 วินาที โดยยิง `GET /api/health` ของโปรเจกต์ ผ่านเกณฑ์เมื่อ request ล้มเหลวน้อยกว่า 1%, p95 ต่ำกว่า 500 ms และ checks ผ่านมากกว่า 99%
+
+หากอยากลองชุดสั้น ให้กำหนดตัวแปรก่อนรัน เช่น:
+
+```bash
+PROFILE=smoke VUS=10 DURATION=30s npm run test:load
+```
+
+ใช้ `PROFILE=stress` เพื่อรันชุด stress ของไฟล์ตัวอย่าง (สูงสุด 200 users) แอปจำกัดอัตรา 100 requests ต่อ 60 วินาทีต่อ IP ดังนั้นการรัน load/stress จากเครื่องเดียวอาจได้ HTTP 429 และ threshold ล้มเหลว ดู[ผลทดสอบตัวอย่าง](./performance-reports/2026-10-03/README.md)
+
 ## วิเคราะห์คุณภาพโค้ดด้วย SonarQube
 
 เปิด SonarQube แยกจากบริการหลักด้วย Docker profile:

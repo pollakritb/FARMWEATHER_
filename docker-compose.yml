@@ -38,6 +38,21 @@ services:
       retries: 10
     restart: unless-stopped
 
+  k6:
+    image: grafana/k6:latest
+    profiles: [load]
+    volumes:
+      - ./scripts:/scripts:ro
+    environment:
+      BASE_URL: http://app:3000
+      PROFILE: ${PROFILE:-load}
+      VUS: ${VUS:-5}
+      DURATION: ${DURATION:-20s}
+    command: run /scripts/k6-health.js
+    depends_on:
+      app:
+        condition: service_healthy
+
   sonarqube:
     image: sonarqube:community
     profiles: [sonar]

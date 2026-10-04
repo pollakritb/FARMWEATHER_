@@ -17,6 +17,7 @@
     "proxy:validate": "npx -y @stoplight/prism-cli proxy openapi.json http://localhost:3000 --errors",
     "test": "jest",
     "test:live": "node scripts/live-openapi-smoke.mjs",
+    "test:load": "docker compose --profile load run --rm k6",
     "test:coverage": "jest --coverage --runInBand",
     "test:watch": "jest --watch",
     "lint": "eslint \"{src,test}/**/*.ts\"",

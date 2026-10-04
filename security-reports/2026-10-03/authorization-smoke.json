@@ -1,0 +1,301 @@
+{
+  "target": "http://127.0.0.1:3100",
+  "generatedAt": "2026-10-03T04:42:46.560Z",
+  "mode": "isolated in-memory API with demo weather",
+  "summary": {
+    "passed": 28,
+    "failed": 0,
+    "total": 28
+  },
+  "checks": [
+    {
+      "name": "Health endpoint responds",
+      "method": "GET",
+      "path": "/api/health",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Missing bearer token is rejected",
+      "method": "GET",
+      "path": "/api/plots",
+      "expected": [
+        401
+      ],
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "Unexpected role field is rejected during registration",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "expected": [
+        400
+      ],
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "Register account A",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "expected": [
+        201
+      ],
+      "status": 201,
+      "passed": true
+    },
+    {
+      "name": "Register account B",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "expected": [
+        201
+      ],
+      "status": 201,
+      "passed": true
+    },
+    {
+      "name": "Bad login password is rejected",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "expected": [
+        401
+      ],
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "Tampered bearer token is rejected",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "expected": [
+        401
+      ],
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "Farmer cannot list users",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "expected": [
+        403
+      ],
+      "status": 403,
+      "passed": true
+    },
+    {
+      "name": "Farmer cannot change roles",
+      "method": "PATCH",
+      "path": "/api/admin/users/acb25c8b-fcca-4c14-b93a-646bc13d8359/role",
+      "expected": [
+        403
+      ],
+      "status": 403,
+      "passed": true
+    },
+    {
+      "name": "Unexpected role field is rejected on profile",
+      "method": "PATCH",
+      "path": "/api/profile",
+      "expected": [
+        400
+      ],
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "Account A creates a plot",
+      "method": "POST",
+      "path": "/api/plots",
+      "expected": [
+        201
+      ],
+      "status": 201,
+      "passed": true
+    },
+    {
+      "name": "Owner can read plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot list A plot",
+      "method": "GET",
+      "path": "/api/plots",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot update A plot",
+      "method": "PATCH",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot delete A plot",
+      "method": "DELETE",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read weather A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/weather/hourly",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read current weather A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/weather/current",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read weather history A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/weather/history/hourly",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot run analysis A plot",
+      "method": "POST",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/analysis/run",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read analysis A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/analysis",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Account B cannot read notifications A plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48/notifications",
+      "expected": [
+        403,
+        404
+      ],
+      "status": 404,
+      "passed": true
+    },
+    {
+      "name": "Cross-account attempts did not alter owner plot",
+      "method": "GET",
+      "path": "/api/plots/d48f44ab-6f1c-4506-9443-eaa8d2d95c48",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Unknown reset token is rejected",
+      "method": "POST",
+      "path": "/api/auth/reset-password",
+      "expected": [
+        400
+      ],
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "Logout revokes the session",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "expected": [
+        204
+      ],
+      "status": 204,
+      "passed": true
+    },
+    {
+      "name": "Revoked session cannot access profile",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "expected": [
+        401
+      ],
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "Untrusted origin is not granted CORS access",
+      "method": "GET",
+      "path": "/api/health",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "Security response headers are present",
+      "method": "GET",
+      "path": "/api/health",
+      "expected": [
+        200
+      ],
+      "status": 200,
+      "passed": true
+    }
+  ]
+}

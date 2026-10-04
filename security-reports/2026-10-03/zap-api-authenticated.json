@@ -1,0 +1,915 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.17.0",
+	"@generated": "Sat, 3 Oct 2026 04:57:16",
+	"created": "2026-10-03T04:57:16.909500949Z",
+	"insights":[
+		{
+			"level": "Low",
+			"reason": "Exceeded High",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.code.4xx",
+			"description": "Percentage of responses with status code 4xx",
+			"statistic": "92"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.code.2xx",
+			"description": "Percentage of responses with status code 2xx",
+			"statistic": "7"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.ctype.application/json",
+			"description": "Percentage of endpoints with content type application/json",
+			"statistic": "98"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.ctype.text/html",
+			"description": "Percentage of endpoints with content type text/html",
+			"statistic": "1"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.method.GET",
+			"description": "Percentage of endpoints with method GET",
+			"statistic": "61"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.method.PATCH",
+			"description": "Percentage of endpoints with method PATCH",
+			"statistic": "21"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.method.POST",
+			"description": "Percentage of endpoints with method POST",
+			"statistic": "17"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://127.0.0.1:3100",
+			"key": "insight.endpoint.total",
+			"description": "Count of total endpoints",
+			"statistic": "76"
+		}
+	],
+	"site":[ 
+		{
+			"@name": "http://127.0.0.1:3100",
+			"@host": "127.0.0.1",
+			"@port": "3100",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "100001",
+					"alertRef": "100001",
+					"alert": "Unexpected Content-Type was returned",
+					"name": "Unexpected Content-Type was returned",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A Content-Type of text/html was returned by the server.</p><p>This is not one of the types expected to be returned by an API.</p><p>Raised by the 'Alert on Unexpected Content Types' script</p>",
+					"instances":[ 
+						{
+							"id": "21",
+							"uri": "http://127.0.0.1:3100",
+							"nodeName": "http:\/\/127.0.0.1:3100",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2306",
+							"uri": "http://127.0.0.1:3100/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						}
+					],
+					"count": "2",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "70"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-1",
+					"alert": "A Client Error response code was returned by the server",
+					"name": "A Client Error response code was returned by the server",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>A response code of 404 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "7",
+							"uri": "http://127.0.0.1:3100/2250435311176608052",
+							"nodeName": "http:\/\/127.0.0.1:3100\/2250435311176608052",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "30",
+							"uri": "http://127.0.0.1:3100/api",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2308",
+							"uri": "http://127.0.0.1:3100/api/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "8",
+							"uri": "http://127.0.0.1:3100/api/6337685271509363046",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/6337685271509363046",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "35",
+							"uri": "http://127.0.0.1:3100/api/admin",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2311",
+							"uri": "http://127.0.0.1:3100/api/admin/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "9",
+							"uri": "http://127.0.0.1:3100/api/admin/268894950288055111",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/268894950288055111",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "4",
+							"uri": "http://127.0.0.1:3100/api/admin/users",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "2310",
+							"uri": "http://127.0.0.1:3100/api/admin/users/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "10",
+							"uri": "http://127.0.0.1:3100/api/admin/users/7430766105867173481",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/7430766105867173481",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "40",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2312",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "11",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/674767950933019693",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/674767950933019693",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2635",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/actuator/health",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/actuator\/health",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "44",
+							"uri": "http://127.0.0.1:3100/api/auth",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2314",
+							"uri": "http://127.0.0.1:3100/api/auth/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "12",
+							"uri": "http://127.0.0.1:3100/api/auth/7589755952290759532",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/7589755952290759532",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "49",
+							"uri": "http://127.0.0.1:3100/api/notifications",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2317",
+							"uri": "http://127.0.0.1:3100/api/notifications/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13",
+							"uri": "http://127.0.0.1:3100/api/notifications/7067910540686894382",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/7067910540686894382",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "53",
+							"uri": "http://127.0.0.1:3100/api/notifications/fa59e90b-08da-463d-8049-a105732388d6",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/fa59e90b-08da-463d-8049-a105732388d6",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2318",
+							"uri": "http://127.0.0.1:3100/api/notifications/fa59e90b-08da-463d-8049-a105732388d6/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/fa59e90b-08da-463d-8049-a105732388d6\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "14",
+							"uri": "http://127.0.0.1:3100/api/notifications/fa59e90b-08da-463d-8049-a105732388d6/6482398821499281058",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/fa59e90b-08da-463d-8049-a105732388d6\/6482398821499281058",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "15",
+							"uri": "http://127.0.0.1:3100/api/plots/8963022238898408086",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/8963022238898408086",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "16",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/4969793995162196192",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/4969793995162196192",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/analysis/8410855465247473828",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/analysis\/8410855465247473828",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "58",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2320",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/8985775606367098800",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/8985775606367098800",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "19",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/current/9005297810736743660",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/current\/9005297810736743660",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "68",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/history",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/history",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2322",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/history/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/history\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/history/4892709964681036922",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/history\/4892709964681036922",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/role",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/role ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "5",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/role",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/role ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "2111",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/role",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/role ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2295",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/role/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/role\/ ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "6",
+							"uri": "http://127.0.0.1:3100/api/notifications/fa59e90b-08da-463d-8049-a105732388d6/read",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/fa59e90b-08da-463d-8049-a105732388d6\/read",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2299",
+							"uri": "http://127.0.0.1:3100/api/notifications/fa59e90b-08da-463d-8049-a105732388d6/read/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/notifications\/fa59e90b-08da-463d-8049-a105732388d6\/read\/",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "74",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167 ()({name,latitude,longitude,province,cropType,plantedAt,active})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "325",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167 ()({name,latitude,longitude,province,cropType,plantedAt,active})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2301",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/ ()({name,latitude,longitude,province,cropType,plantedAt,active})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "95",
+							"uri": "http://127.0.0.1:3100/api/profile",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/profile ()({displayName,phone,province})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "639",
+							"uri": "http://127.0.0.1:3100/api/profile",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/profile ()({displayName,phone,province})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2303",
+							"uri": "http://127.0.0.1:3100/api/profile/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/profile\/ ()({displayName,phone,province})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "1681",
+							"uri": "http://127.0.0.1:3100/computeMetadata/v1/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/computeMetadata\/v1\/ ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1666",
+							"uri": "http://127.0.0.1:3100/latest/meta-data/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/latest\/meta-data\/ ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1751",
+							"uri": "http://127.0.0.1:3100/metadata/instance",
+							"nodeName": "http:\/\/127.0.0.1:3100\/metadata\/instance ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1759",
+							"uri": "http://127.0.0.1:3100/metadata/v1",
+							"nodeName": "http:\/\/127.0.0.1:3100\/metadata\/v1 ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1699",
+							"uri": "http://127.0.0.1:3100/opc/v1/instance/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/opc\/v1\/instance\/ ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1711",
+							"uri": "http://127.0.0.1:3100/opc/v2/instance/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/opc\/v2\/instance\/ ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "1768",
+							"uri": "http://127.0.0.1:3100/openstack/latest/meta_data.json",
+							"nodeName": "http:\/\/127.0.0.1:3100\/openstack\/latest\/meta_data.json ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2",
+							"uri": "http://127.0.0.1:3100/api/auth/forgot-password",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/forgot-password ()({username})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "2107",
+							"uri": "http://127.0.0.1:3100/api/auth/forgot-password",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/forgot-password ()({username})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2298",
+							"uri": "http://127.0.0.1:3100/api/auth/forgot-password/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/forgot-password\/ ()({username})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "1",
+							"uri": "http://127.0.0.1:3100/api/auth/login",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/login ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "1010",
+							"uri": "http://127.0.0.1:3100/api/auth/login",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/login ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2297",
+							"uri": "http://127.0.0.1:3100/api/auth/login/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/login\/ ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "0",
+							"uri": "http://127.0.0.1:3100/api/auth/register",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/register ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "1022",
+							"uri": "http://127.0.0.1:3100/api/auth/register",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/register ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2296",
+							"uri": "http://127.0.0.1:3100/api/auth/register/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/register\/ ()({username,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "3",
+							"uri": "http://127.0.0.1:3100/api/auth/reset-password",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/reset-password ()({token,newPassword})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "1008",
+							"uri": "http://127.0.0.1:3100/api/auth/reset-password",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/reset-password ()({token,newPassword})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2300",
+							"uri": "http://127.0.0.1:3100/api/auth/reset-password/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/reset-password\/ ()({token,newPassword})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "77",
+							"uri": "http://127.0.0.1:3100/api/plots",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots ()({name,latitude,longitude,province,cropType,plantedAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "322",
+							"uri": "http://127.0.0.1:3100/api/plots",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots ()({name,latitude,longitude,province,cropType,plantedAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2302",
+							"uri": "http://127.0.0.1:3100/api/plots/",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/ ()({name,latitude,longitude,province,cropType,plantedAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						}
+					],
+					"count": "67",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "42"
+				},
+				{
+					"pluginid": "10111",
+					"alertRef": "10111",
+					"alert": "Authentication Request Identified",
+					"name": "Authentication Request Identified",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
+					"instances":[ 
+						{
+							"id": "874",
+							"uri": "http://127.0.0.1:3100/api/auth/login",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/login ()({username,password})",
+							"method": "POST",
+							"param": "username",
+							"attack": "",
+							"evidence": "password",
+							"otherinfo": "userParam=username\nuserValue=John Doe\npasswordParam=password"
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "<p>This is an informational alert rather than a vulnerability and so there is nothing to fix.</p>",
+					"otherinfo": "<p>userParam=username</p><p>userValue=John Doe</p><p>passwordParam=password</p>",
+					"reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "6"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-1",
+					"alert": "Non-Storable Content",
+					"name": "Non-Storable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+					"instances":[ 
+						{
+							"id": "888",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167/weather/history/observations",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167\/weather\/history\/observations",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "897",
+							"uri": "http://127.0.0.1:3100/api/admin/users/id/role",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/admin\/users\/id\/role ()({role})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "PATCH ",
+							"otherinfo": ""
+						},
+						{
+							"id": "898",
+							"uri": "http://127.0.0.1:3100/api/plots/b597032f-a42f-4b24-bb62-9806ee323167",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots\/b597032f-a42f-4b24-bb62-9806ee323167 ()({name,latitude,longitude,province,cropType,plantedAt,active})",
+							"method": "PATCH",
+							"param": "",
+							"attack": "",
+							"evidence": "PATCH ",
+							"otherinfo": ""
+						},
+						{
+							"id": "896",
+							"uri": "http://127.0.0.1:3100/api/auth/reset-password",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/auth\/reset-password ()({token,newPassword})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "895",
+							"uri": "http://127.0.0.1:3100/api/plots",
+							"nodeName": "http:\/\/127.0.0.1:3100\/api\/plots ()({name,latitude,longitude,province,cropType,plantedAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": true,
+					"solution": "<p>The content may be marked as storable by ensuring that the following conditions are satisfied:</p><p>The request method must be understood by the cache and defined as being cacheable (\"GET\", \"HEAD\", and \"POST\" are currently defined as cacheable)</p><p>The response status code must be understood by the cache (one of the 1XX, 2XX, 3XX, 4XX, or 5XX response classes are generally understood)</p><p>The \"no-store\" cache directive must not appear in the request or response header fields</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"private\" response directive must not appear in the response</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"Authorization\" header field must not appear in the request, unless the response explicitly allows it (using one of the \"must-revalidate\", \"public\", or \"s-maxage\" Cache-Control response directives)</p><p>In addition to the conditions above, at least one of the following conditions must also be satisfied by the response:</p><p>It must contain an \"Expires\" header field</p><p>It must contain a \"max-age\" response directive</p><p>For \"shared\" caches such as \"proxy\" caches, it must contain a \"s-maxage\" response directive</p><p>It must contain a \"Cache Control Extension\" that allows it to be cached</p><p>It must have a status code that is defined as cacheable by default (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "31"
+				}
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}
