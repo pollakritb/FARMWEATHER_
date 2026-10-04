@@ -2,6 +2,8 @@
 
 NestJS backend สำหรับบัญชีเกษตรกรและแปลงเพาะปลูก ดึงค่าตรวจวัดจริงจากสถานี TMD ที่ใกล้ที่สุดและพยากรณ์รายชั่วโมงตามพิกัด ประเมินความเสี่ยงตามชนิดพืชและระยะการเจริญเติบโต และสร้าง notification inbox
 
+สำหรับงานกลุ่มที่ต้องการทดสอบโดยไม่ขอ API key หรือ token ให้ใช้ [Docker classroom พร้อม k6 และ SonarQube](#classroom-docker) ด้านล่าง
+
 ## Quick start
 
 รันทั้ง API และ PostgreSQL ด้วย Docker:
@@ -160,6 +162,121 @@ API ส่วนใหญ่ต้องส่ง `Authorization: Bearer <token>
 
 ขั้นถัดไปที่เหมาะสมคือเชื่อม email/SMS สำหรับส่ง password-reset link, notification provider ภายนอก และทบทวน threshold/ช่วงระยะพืชกับผู้เชี่ยวชาญเกษตร
 
+<a id="classroom-docker"></a>
+
 ## Docker สำหรับงานกลุ่ม ไม่ต้องขอ API key หรือ token
 
-ดูคำสั่งเปิด API, ทดสอบ k6 และ scan SonarQube อัตโนมัติที่ [CLASSROOM.md](CLASSROOM.md) ชุดนี้ใช้ `compose.classroom.yml` และ image `farmweather:classroom`
+ใช้ชุด classroom สำหรับทดสอบในวิชาเรียน เพื่อนในกลุ่มไม่ต้องขอ `.env`, TMD API key หรือ bearer token จากเจ้าของโปรเจกต์ ระบบใช้ข้อมูลอากาศจำลองและบัญชี ADMIN ทดสอบร่วมกัน เปิด API โดยไม่ส่ง Authorization และปิด rate limit สำหรับ k6 ข้อมูลอยู่ใน memory และรีเซ็ตเมื่อ restart container
+
+### สิ่งที่ต้องเตรียม
+
+- Docker Engine หรือ Docker Desktop พร้อม Docker Compose v2 และเปิด Docker ไว้
+- Git สำหรับดาวน์โหลด source code
+- Bash สำหรับคำสั่งด้านล่าง เช่น Terminal บน Linux/macOS หรือ Git Bash/WSL บน Windows
+- อินเทอร์เน็ตสำหรับดาวน์โหลด Docker images และ dependencies ครั้งแรก
+
+ทุกคำสั่งให้รันจากโฟลเดอร์ repository:
+
+```bash
+git clone https://github.com/pollakritb/FARMWEATHER_.git
+cd FARMWEATHER_
+```
+
+ถ้ามี repository อยู่แล้ว ให้ใช้ `git pull` เพื่อรับเวอร์ชันล่าสุดก่อนเริ่ม
+
+### 1. Build และเปิด Docker API
+
+```bash
+docker compose --env-file /dev/null -f compose.classroom.yml up -d --build app
+```
+
+`--env-file /dev/null` ทำให้ชุดทดสอบไม่อ่านไฟล์ `.env` ส่วนตัวในเครื่อง ไม่ต้องสร้างหรือส่ง `.env` ให้เพื่อน
+
+- หน้าเว็บ: http://localhost:3001
+- Swagger: http://localhost:3001/docs
+- API base URL สำหรับ k6/Postman: `http://localhost:3001/api`
+
+เรียก API ได้ทันทีโดยไม่ต้อง login หรือส่ง token:
+
+```bash
+curl http://localhost:3001/api/health
+curl http://localhost:3001/api/plots
+curl http://localhost:3001/api/auth/me
+```
+
+ระบบเตรียมแปลงข้าวตัวอย่างไว้แล้ว คัดลอก `id` จาก `/api/plots` แล้วใช้แทน `PLOT_ID` ในตัวอย่างนี้:
+
+```bash
+curl http://localhost:3001/api/plots/PLOT_ID/weather/hourly
+curl http://localhost:3001/api/plots/PLOT_ID/weather/current
+curl -X POST http://localhost:3001/api/plots/PLOT_ID/analysis/run
+```
+
+หากต้องการเข้าสู่หน้าเว็บด้วยบัญชีตัวอย่าง ใช้ `classroom` / `ClassroomDemo123!` ทุก request ของ API ในโหมดนี้ใช้บัญชี classroom ร่วมกัน จึงเห็นและแก้ไขข้อมูลชุดเดียวกัน
+
+### 2. รัน k6 โดยไม่ใช้ token
+
+เปิด Terminal อีกหน้าหนึ่งในโฟลเดอร์ repository แล้วรัน:
+
+```bash
+# Smoke: 5 users / 20 วินาที
+docker compose --env-file /dev/null -f compose.classroom.yml --profile load run --rm k6
+
+# Load: เพิ่มถึง 20 users
+PROFILE=load docker compose --env-file /dev/null -f compose.classroom.yml --profile load run --rm k6
+
+# Stress: เพิ่มถึง 200 users
+PROFILE=stress docker compose --env-file /dev/null -f compose.classroom.yml --profile load run --rm k6
+
+# ปรับ smoke test เอง
+PROFILE=smoke VUS=10 DURATION=30s docker compose --env-file /dev/null -f compose.classroom.yml --profile load run --rm k6
+```
+
+สคริปต์ `scripts/k6-classroom.js` ทดสอบ health, plots, hourly weather และ current weather โดยไม่ส่ง token ผลสรุปแสดงใน Terminal เกณฑ์ผ่านคือ request ล้มเหลวน้อยกว่า 1%, p95 ต่ำกว่า 500 ms และ checks ผ่านมากกว่า 99% ผลจริงขึ้นกับทรัพยากรเครื่องที่ใช้ทดสอบ
+
+หากเขียนสคริปต์ k6 เอง ใช้ `http://localhost:3001` เมื่อรัน k6 บนเครื่อง หรือ `http://app:3000` เมื่อรันใน Compose network ของชุด classroom ไม่ต้องใส่ Authorization header
+
+### 3. รัน SonarQube โดยไม่สร้าง token เอง
+
+```bash
+bash scripts/run-classroom-sonar.sh
+```
+
+คำสั่งนี้เปิด SonarQube รอให้พร้อม ตั้งบัญชี demo สร้าง scanner token ในเครื่องนั้นอัตโนมัติ รัน Jest coverage ใน Docker และส่งผล scan ไปยัง SonarQube ไม่ต้องติดตั้ง Node.js บนเครื่องหรือขอ token จากเจ้าของโปรเจกต์ token เก็บใน Docker volume โดยไม่แสดงใน Terminal หรือเก็บใน repository
+
+เปิดผลที่ http://localhost:9001/dashboard?id=farmweather
+
+- Username: `admin`
+- Password: `ClassroomSonarDemo123!`
+
+ครั้งแรกอาจใช้เวลาหลายนาที หลัง scanner แสดง `EXECUTION SUCCESS` ให้รอ SonarQube ประมวลผลรายงานก่อน refresh หน้า dashboard การ scan สำเร็จไม่ได้หมายความว่า quality gate ผ่านทุกเกณฑ์ ให้ตรวจผลบน dashboard อีกครั้ง
+
+SonarQube ต้องใช้ source code ใน repository รวม `src`, `test`, `package-lock.json` และ `sonar-project.properties` จึงต้อง clone repository หรือใช้ source zip ด้วย แม้จะได้รับ Docker image API มาแล้ว
+
+### 4. ดู log และหยุด Docker
+
+```bash
+docker compose --env-file /dev/null -f compose.classroom.yml logs --tail=100 app
+docker compose --env-file /dev/null -f compose.classroom.yml --profile load --profile sonar down
+```
+
+API classroom ใช้พอร์ต 3001 และ SonarQube ใช้พอร์ต 9001 เพื่อแยกจากชุดปกติ หากพอร์ตถูกใช้อยู่ให้หยุด container ที่ชนกันหรือแก้เลขพอร์ตฝั่งซ้ายใน `compose.classroom.yml`
+
+### ใช้ Docker image ที่เพื่อนส่งให้ โดยไม่ต้อง build
+
+ไฟล์ `farmweather-classroom.tar.gz` เป็น Docker image export ที่ส่งแยกจาก GitHub repository สำหรับ Linux amd64 ถ้ามีไฟล์นี้แล้ว:
+
+```bash
+docker load -i farmweather-classroom.tar.gz
+docker run --rm -p 127.0.0.1:3001:3000 farmweather:classroom
+```
+
+จากนั้นเรียก API ได้ที่ URL เดิม หากจะใช้ Compose กับ image ที่โหลดไว้ ให้เปิดด้วยคำสั่งนี้แทนขั้นตอน build:
+
+```bash
+docker compose --env-file /dev/null -f compose.classroom.yml up -d --no-build app
+```
+
+เลือกเปิด API ด้วย `docker run` หรือ Compose อย่างใดอย่างหนึ่ง เพื่อไม่ให้พอร์ต 3001 ชนกัน การทดสอบ k6 ตามขั้นตอนด้านบนใช้ Compose
+
+ชุด classroom ใช้ bypass สำหรับงานวิชาเรียนและเปิดพอร์ตเฉพาะ localhost ส่วน `docker-compose.yml` ปกติยังตรวจ token ตามเดิม หากทดสอบ authentication, authorization หรือ rate limit ให้ใช้ชุดปกติ ดูรายละเอียดเพิ่มเติมที่ [CLASSROOM.md](CLASSROOM.md)
