@@ -40,7 +40,22 @@ bash scripts/run-classroom-sonar.sh
 
 ต้องมี Docker Compose และ Bash คำสั่งจะเปิด SonarQube สร้าง token ของ SonarQube ในเครื่องนั้นอัตโนมัติ รัน Jest coverage ใน Docker แล้ว scan source code โดยไม่ใช้ API key หรือ token ส่วนตัวของใคร token อยู่ใน Docker volume ไม่แสดงใน terminal และไม่เก็บใน repository
 
-ดูผลที่ http://localhost:9001 (บัญชี local demo: `admin` / `ClassroomSonarDemo123!`) ครั้งแรกอาจใช้เวลาหลายนาทีในการเริ่ม SonarQube และดาวน์โหลดเครื่องมือ ถ้าเครื่อง RAM น้อยควรหยุด k6 ก่อนรัน SonarQube
+เมื่อบริการพร้อม terminal จะแสดง URL เข้าใช้งาน และหลัง scan จะแสดง URL dashboard ให้คลิกได้โดยตรง ค่าเริ่มต้นคือ http://localhost:9001/dashboard?id=farmweather (บัญชี local demo: `admin` / `ClassroomSonarDemo123!`) ครั้งแรกอาจใช้เวลาหลายนาทีในการเริ่ม SonarQube และดาวน์โหลดเครื่องมือ ถ้าเครื่อง RAM น้อยควรหยุด k6 ก่อนรัน SonarQube
+
+ให้เปิด URL บนเครื่องที่รัน Docker `localhost` ของเพื่อนแต่ละคนหมายถึงเครื่องของคนนั้น ต้องรันสคริปต์บนเครื่องตัวเองก่อน เปิด Docker Desktop / Docker Engine ให้ทำงานด้วย หากพอร์ต 9001 ถูกใช้อยู่:
+
+```bash
+CLASSROOM_SONAR_PORT=9010 bash scripts/run-classroom-sonar.sh
+```
+
+สคริปต์จะอ่านพอร์ตจริงจาก Docker แล้วแสดง URL ตามพอร์ตนั้น หากเปิดไม่ได้ ให้ตรวจสถานะและ log:
+
+```bash
+docker compose --env-file /dev/null -f compose.classroom.yml ps -a sonarqube
+docker compose --env-file /dev/null -f compose.classroom.yml logs --tail=100 sonarqube
+```
+
+SonarQube จะเริ่มใหม่เมื่อ Docker เปิดขึ้นอีกครั้ง แต่หลังใช้คำสั่ง `down` ต้องรันสคริปต์ใหม่ก่อนเปิด URL
 
 SonarQube วิเคราะห์ source code จึงต้องใช้ repository เต็ม รวม `src`, `test`, `package-lock.json` และ `sonar-project.properties` ไม่สามารถ scan ด้วย image API อย่างเดียว
 

@@ -71,24 +71,21 @@ PROFILE=smoke VUS=10 DURATION=30s npm run test:load
 
 ## วิเคราะห์คุณภาพโค้ดด้วย SonarQube
 
-เปิด SonarQube แยกจากบริการหลักด้วย Docker profile:
+ใช้ Docker รัน SonarQube พร้อมสแกนโปรเจกต์ โดยไม่ต้องสร้างหรือกรอก token และไม่ต้องติดตั้ง Node.js:
 
 ```bash
-npm run sonar:up
+bash scripts/run-classroom-sonar.sh
 ```
 
-รอจน `http://localhost:9000` พร้อมใช้งาน จากนั้นสร้าง project ชื่อ `farmweather`
-และ token จากหน้า SonarQube แล้วสร้าง coverage และสแกนด้วย SonarScanner container:
+สคริปต์รอจนบริการพร้อมแล้วแสดง URL ใน terminal พร้อมบัญชี `admin` / `ClassroomSonarDemo123!` และแสดง URL dashboard เมื่อส่งผล scan สำเร็จ ค่าเริ่มต้นคือ http://localhost:9001/dashboard?id=farmweather ให้เปิดจากเครื่องที่รัน Docker
+
+ถ้าเปิด URL ไม่ได้ ให้รันคำสั่งข้างต้นก่อน URL ในคู่มือจะใช้ได้เมื่อ container ทำงานเท่านั้น ถ้าพอร์ต 9001 ถูกใช้อยู่ ให้เลือกพอร์ตใหม่:
 
 ```bash
-SONAR_TOKEN='your-token' npm run sonar:coverage
+CLASSROOM_SONAR_PORT=9010 bash scripts/run-classroom-sonar.sh
 ```
 
-คำสั่งนี้รัน Jest เพื่อสร้าง `coverage/lcov.info` แล้วรัน SonarScanner เพื่อส่งผลเข้า SonarQube
-การรัน `npm run test:coverage` เพียงอย่างเดียวจะไม่อัปเดตหน้า SonarQube
-ไฟล์ `sonar-project.properties` กำหนดให้วิเคราะห์ TypeScript ใน `src`, อ่าน tests จาก
-`test` และนำเข้า coverage จาก `coverage/lcov.info` โดยไม่เก็บ token ลง repository
-หยุด SonarQube ได้ด้วย `npm run sonar:down`
+ระบบสร้าง scanner token ภายใน Docker ให้อัตโนมัติ ไม่ต้องใช้ token ส่วนตัว ดูรายละเอียดและวิธีหยุดที่ [CLASSROOM.md](./CLASSROOM.md)
 
 ## โครงสร้าง source แบบ MVC
 
@@ -244,7 +241,7 @@ bash scripts/run-classroom-sonar.sh
 
 คำสั่งนี้เปิด SonarQube รอให้พร้อม ตั้งบัญชี demo สร้าง scanner token ในเครื่องนั้นอัตโนมัติ รัน Jest coverage ใน Docker และส่งผล scan ไปยัง SonarQube ไม่ต้องติดตั้ง Node.js บนเครื่องหรือขอ token จากเจ้าของโปรเจกต์ token เก็บใน Docker volume โดยไม่แสดงใน Terminal หรือเก็บใน repository
 
-เปิดผลที่ http://localhost:9001/dashboard?id=farmweather
+เปิด URL ที่ terminal แสดงหลังบริการพร้อม (ค่าเริ่มต้น http://localhost:9001/dashboard?id=farmweather) จากเครื่องที่รัน Docker
 
 - Username: `admin`
 - Password: `ClassroomSonarDemo123!`
@@ -260,7 +257,7 @@ docker compose --env-file /dev/null -f compose.classroom.yml logs --tail=100 app
 docker compose --env-file /dev/null -f compose.classroom.yml --profile load --profile sonar down
 ```
 
-API classroom ใช้พอร์ต 3001 และ SonarQube ใช้พอร์ต 9001 เพื่อแยกจากชุดปกติ หากพอร์ตถูกใช้อยู่ให้หยุด container ที่ชนกันหรือแก้เลขพอร์ตฝั่งซ้ายใน `compose.classroom.yml`
+API classroom ใช้พอร์ต 3001 และ SonarQube ใช้พอร์ต 9001 เพื่อแยกจากชุดปกติ หากพอร์ตถูกใช้อยู่ให้หยุด container ที่ชนกันหรือใช้ `CLASSROOM_SONAR_PORT=9010 bash scripts/run-classroom-sonar.sh` สำหรับ SonarQube
 
 ### ใช้ Docker image ที่เพื่อนส่งให้ โดยไม่ต้อง build
 
